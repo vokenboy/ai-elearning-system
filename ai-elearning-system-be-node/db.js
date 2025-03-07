@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const connectToDatabase = async () => {
     try {
-        const uri = process.env.MONGO_DB_CONNECTION; // Updated variable name
+        const uri = process.env.MONGO_DB_CONNECTION;
         if (!uri) {
             throw new Error(
                 "Missing MongoDB connection URI. Please set MONGO_DB_CONNECTION in your .env file."
