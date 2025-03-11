@@ -4,9 +4,8 @@ const User = require("../models/user.Model");
 
 exports.registerUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
-
-        if (!name || !email || !password || !role) {
+        const { name, email, password } = req.body;
+        if (!name || !email || !password) {
             return res
                 .status(400)
                 .json({ error: "Please provide all required fields" });
@@ -17,13 +16,10 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ error: "User already exists" });
         }
 
-        const user = new User({ name, email, password, role });
+        const user = new User({ name, email, password, role: "User" });
         await user.save();
 
-        res.status(201).json({
-            message: "User registered successfully",
-            user,
-        });
+        res.status(201).json({ message: "User registered successfully", user });
     } catch (error) {
         console.error("Error registering user:", error);
         res.status(500).json({ error: "Server error" });
