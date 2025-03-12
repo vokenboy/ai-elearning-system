@@ -1,133 +1,133 @@
 .register-container {
-    width: 350px;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    font-family: Arial, sans-serif;
+  width: 350px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 h2 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .google-button {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    background: white;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .google-icon {
-    font-size: 18px;
-    margin-right: 8px;
+  font-size: 18px;
+  margin-right: 8px;
 }
 
 .divider {
-    margin: 15px 0;
-    font-size: 14px;
-    color: gray;
-    position: relative;
+  margin: 15px 0;
+  font-size: 14px;
+  color: gray;
+  position: relative;
 }
 
 .divider::before,
 .divider::after {
-    content: "";
-    width: 40%;
-    height: 1px;
-    background: lightgray;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 10px;
+  content: "";
+  width: 40%;
+  height: 1px;
+  background: lightgray;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px;
 }
 
 .input-container {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 8px;
-    margin: 10px 0;
-    background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+  margin: 10px 0;
+  background: #f9f9f9;
 }
 
 .input-container input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    outline: none;
-    padding: 5px;
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 5px;
 }
 
 .icon {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 .eye-icon {
-    cursor: pointer;
-    font-size: 14px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .create-account {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background: #005eff;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #005eff;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
 .create-account:hover {
-    background: #004bcc;
+  background: #004bcc;
 }
 
 .terms,
 .login-link {
-    font-size: 12px;
-    color: gray;
-    margin-top: 15px;
+  font-size: 12px;
+  color: gray;
+  margin-top: 15px;
 }
 
 .terms a,
 .login-link a {
-    color: #005eff;
-    text-decoration: none;
+  color: #005eff;
+  text-decoration: none;
 }
 
 .terms a:hover,
 .login-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+  margin: 0;
 }
 
 .register-container {
-    width: 350px;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    font-family: Arial, sans-serif;
+  width: 350px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
