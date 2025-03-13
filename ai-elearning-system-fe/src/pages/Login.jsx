@@ -12,7 +12,12 @@ import {
     Divider,
     Link,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+    Email as EmailIcon,
+    Lock as LockIcon,
+    Visibility,
+    VisibilityOff,
+} from "@mui/icons-material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/auth/authAPI";
 import { useAuth } from "../context/authContext";
@@ -80,7 +85,7 @@ const Login = () => {
                     boxShadow: 1,
                 }}
             >
-                <Typography variant="h5" component="h1">
+                <Typography variant="h5" component="h1" sx={{ mb: 3 }}>
                     Login
                 </Typography>
 
@@ -99,17 +104,30 @@ const Login = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <EmailIcon />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
 
                 <TextField
                     label="Password"
                     variant="outlined"
                     type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
                     fullWidth
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <LockIcon />
+                            </InputAdornment>
+                        ),
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
@@ -128,7 +146,7 @@ const Login = () => {
                     }}
                 />
 
-                <Box textAlign="right">
+                <Box textAlign="left">
                     <Link
                         component={RouterLink}
                         to="/forgot-password"
@@ -146,7 +164,7 @@ const Login = () => {
                     fullWidth
                     sx={{ mt: 1 }}
                 >
-                    Log in
+                    Login
                 </Button>
 
                 <FormControlLabel
@@ -158,7 +176,7 @@ const Login = () => {
                 <Divider sx={{ my: 2 }}>Or</Divider>
 
                 <Button variant="outlined" size="large" fullWidth>
-                    Sign in with Google
+                    Login in with Google
                 </Button>
 
                 <Box textAlign="center">
@@ -169,7 +187,7 @@ const Login = () => {
                             to="/register"
                             underline="hover"
                         >
-                            Sign up here
+                            Register here
                         </Link>
                     </Typography>
                 </Box>
