@@ -1,49 +1,52 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 const Header = () => {
-  return (
-    <header style={styles.header}>
-      <div style={styles.logo}>Logo</div>
-      <nav style={styles.nav}>
-        <Link to="/login" style={styles.link}>
-          Login
-        </Link>
-        <Link to="/register" style={styles.link}>
-          Register
-        </Link>
-      </nav>
-    </header>
-  );
-};
+    const { authenticated, logout } = useAuth();
+    const navigate = useNavigate();
 
-const styles = {
-  header: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "15px 15px",
-    backgroundColor: "#333",
-    color: "white",
-    zIndex: 1000,
-  },
-  logo: {
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  nav: {
-    display: "flex",
-    gap: "15px",
-  },
-  link: {
-    color: "white",
-    textDecoration: "none",
-    fontSize: "16px",
-  },
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
+
+    return (
+        <AppBar position="fixed">
+            <Toolbar>
+                <Typography
+                    variant="h6"
+                    component={Link}
+                    to="/"
+                    sx={{
+                        flexGrow: 1,
+                        textDecoration: "none",
+                        color: "inherit",
+                    }}
+                >
+                    Logo
+                </Typography>
+                {authenticated ? (
+                    <Button color="inherit" onClick={handleLogout}>
+                        Logout
+                    </Button>
+                ) : (
+                    <>
+                        <Button color="inherit" component={Link} to="/login">
+                            Login
+                        </Button>
+                        <Button color="inherit" component={Link} to="/register">
+                            Register
+                        </Button>
+                    </>
+                )}
+            </Toolbar>
+        </AppBar>
+    );
 };
 
 export default Header;
