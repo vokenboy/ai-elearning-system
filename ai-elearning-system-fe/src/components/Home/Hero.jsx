@@ -5,23 +5,24 @@ import { motion } from "framer-motion";
 export default function Hero() {
   return (
     <motion.div
-      className="hero"
-      style={{
-        height: "200vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        padding: "0 200px",
-        marginTop: "1000px",
-        position: "relative",
-        backgroundImage: `url("/background.png")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+  className="hero"
+  style={{
+    height: "150vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    padding: "0 100px",
+    marginTop: "-300px", // Moves it up by 100px
+    position: "relative",
+    backgroundImage: `url("/background.png")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
+
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 3 }}
+      transition={{ duration: 2 }} // Reduced the fade duration to make it faster on initial load
     >
       <div
         style={{
@@ -38,7 +39,7 @@ export default function Hero() {
 
       <div className="hero-content" style={{ zIndex: 1 }}>
         <Typography variant="h2" color="black">
-          Welcome to Our E-Learning Platform
+          Welcome to Our E-Learning Platform.
         </Typography>
 
         <motion.div
@@ -47,7 +48,7 @@ export default function Hero() {
           whileOutOfView={{ opacity: 0 }}
           transition={{ duration: 2 }}
           style={{
-            marginTop: "400px",
+            marginTop: "0px",
             fontSize: "1.5rem",
             color: "black",
             fontWeight: 500,
