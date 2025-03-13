@@ -3,18 +3,30 @@ import Home from "./pages/Home";
 import Header from "./components/Header";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import { AuthProvider } from "./context/authContext";
 
 function App() {
-  return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
-  );
+    console.log("App component rendering");
+
+    return (
+        <AuthProvider>
+            <Router>
+                <div className="app-container">
+                    <Header />
+                    <div
+                        className="content-container"
+                        style={{ paddingTop: "70px" }}
+                    >
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/login" element={<Login />} />
+                        </Routes>
+                    </div>
+                </div>
+            </Router>
+        </AuthProvider>
+    );
 }
 
 export default App;
