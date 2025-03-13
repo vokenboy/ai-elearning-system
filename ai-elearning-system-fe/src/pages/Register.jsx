@@ -171,7 +171,7 @@ const Register = () => {
 
                 <Divider sx={{ my: 2 }}>Or</Divider>
                 <Button variant="outlined" size="large" fullWidth>
-                    Login with Google
+                    Register with Google
                 </Button>
 
                 <Box textAlign="center">
