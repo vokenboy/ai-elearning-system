@@ -5,6 +5,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import icon from "./icon.png";
 
 const Header = () => {
     const { authenticated, logout } = useAuth();
@@ -18,18 +19,16 @@ const Header = () => {
     return (
         <AppBar position="fixed">
             <Toolbar>
-                <Typography
-                    variant="h6"
-                    component={Link}
-                    to="/"
-                    sx={{
-                        flexGrow: 1,
-                        textDecoration: "none",
-                        color: "inherit",
-                    }}
-                >
-                    Logo
-                </Typography>
+            <img
+    src={icon}
+    alt="Logo"
+    style={{
+        height: "40px", // Adjust size as needed
+        cursor: "pointer",
+    }}
+    onClick={() => navigate("/")} // Clicking the logo navigates home
+/>
+<div style={{ flexGrow: 1 }} />
                 {authenticated ? (
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
