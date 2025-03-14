@@ -4,11 +4,13 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
     const [authenticated, setAuthenticated] = useState(() => {
+        // console.log(localStorage.getItem("jwt"));
         return localStorage.getItem("jwt") !== null;
     });
 
     const [user, setUser] = useState(() => {
         const userString = localStorage.getItem("user");
+        // console.log(userString);
         return userString ? JSON.parse(userString) : null;
     });
 

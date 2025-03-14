@@ -19,16 +19,16 @@ const Header = () => {
     return (
         <AppBar position="fixed">
             <Toolbar>
-            <img
-    src={icon}
-    alt="Logo"
-    style={{
-        height: "40px", // Adjust size as needed
-        cursor: "pointer",
-    }}
-    onClick={() => navigate("/")} // Clicking the logo navigates home
-/>
-<div style={{ flexGrow: 1 }} />
+                <img
+                    src={icon}
+                    alt="Logo"
+                    style={{
+                        height: "40px", // Adjust size as needed
+                        cursor: "pointer",
+                    }}
+                    onClick={() => navigate("/")} // Clicking the logo navigates home
+                />
+                <div style={{ flexGrow: 1 }} />
                 {authenticated ? (
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
