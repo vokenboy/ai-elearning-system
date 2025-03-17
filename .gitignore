@@ -1,1 +1,5 @@
 ai-elearning-system-py-server/.env
+ai-elearning-system-py-server/post_evaluate_task_endpoint/__pycache__
+ai-elearning-system-py-server/post_generate_task_endpoint/__pycache__
+ai-elearning-system-py-server/__pycache__
+ai-elearning-system-py-server/venv
