@@ -8,3 +8,15 @@ from post_generate_task_endpoint import generate_task
 app = FastAPI()
 app.include_router(generate_task.router)
 # app.include_router(evaluate_task.router)
+
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
