@@ -4,7 +4,7 @@ class TaskRequest(BaseModel):
     topic: str
     language: str
     description: str
-    keywords: list[str]
+    tags: list[str]
     level: str
 
 class TaskResponse(BaseModel):

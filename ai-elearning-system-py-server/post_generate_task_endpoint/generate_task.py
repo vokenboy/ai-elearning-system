@@ -21,7 +21,7 @@ def generate_task(task_request: TaskRequest):
         Topic: {task_request.topic}
         Language: {task_request.language}
         Description: {task_request.description}
-        Keywords: {task_request.keywords}
+        Tags: {task_request.tags}
         Level: {task_request.level}
     """
 
@@ -37,7 +37,7 @@ def generate_task(task_request: TaskRequest):
             "You are Software Engineering teacher.",
             "You write short and easy to understand programing tasks for your students.",
             "You receive a list of data and you need to write a task for your students.",
-            "Data contains: topic, language, description, keywords, level.",
+            "Data contains: topic, language, description, tags, level.",
             "You make task diffuculty based on level.",
             "Your response must be in JSON object containing the following",
             "* task: string",
