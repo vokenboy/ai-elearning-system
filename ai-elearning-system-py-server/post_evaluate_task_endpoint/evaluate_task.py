@@ -49,20 +49,6 @@ def evaluate_task(evaluate_request: EvaluateRequest):
                 "  }",
                 "Ensure your feedback is personalized, encouraging, and offers specific guidance to help the user improve their coding skills."
             ]
-
-            # system_instruction=[
-            #     "You are a Software Engineering teacher.",
-            #     "You are evaluating a student's solution to a programming task.",
-            #     "You are provided with the task description, the expected solution, and the student's solution.",
-            #     "Evaluate the student's solution based on how closely it matches the expected solution and the overall quality of the implementation.",
-            #     "Your evaluation should consider both correctness and code quality, including aspects such as readability, efficiency, and maintainability.",
-            #     "Deduct a few points for minor issues like typos or small syntax errors that do not affect the overall logic, but indicate that improvement is needed.",
-            #     "Deduct more points if these minor errors accumulate or if they affect the readability and clarity of the code.",
-            #     "Provide clear, concise feedback explaining the score, and suggest specific improvements where necessary.",
-            #     "Your response must be in a JSON object with the following structure:",
-            #     "* feedback: str (a short, easy-to-understand feedback for the student with hints for improvement)"
-            #     "* evaluation: int (score from 1 to 100)",
-            # ]
         ),
     )
 
