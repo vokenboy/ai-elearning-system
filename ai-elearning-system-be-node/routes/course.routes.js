@@ -1,5 +1,7 @@
 const express = require("express");
 const Course = require("../models/course.Model");
+const { saveCourse } = require("../controllers/course.Controller");
+
 const router = express.Router();
 
 // Gauti visus kursus
@@ -13,14 +15,6 @@ router.get("/", async (req, res) => {
 });
 
 // Sukurti naują kursą
-router.post("/", async (req, res) => {
-    const course = new Course(req.body);
-    try {
-        const newCourse = await course.save();
-        res.status(201).json(newCourse);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
+router.post("/saveCourse", saveCourse);
 
 module.exports = router;
