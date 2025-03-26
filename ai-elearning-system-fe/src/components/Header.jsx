@@ -29,15 +29,16 @@ const Header = () => {
     onClick={() => navigate("/")} // Clicking the logo navigates home
 />
 <div style={{ flexGrow: 1 }} />
+                 <Button color="inherit" component={Link} to="/courses">
+                            Courses
+                 </Button>
                 {authenticated ? (
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
                     </Button>
                 ) : (
                     <>
-                         <Button color="inherit" component={Link} to="/courses">
-                            Courses
-                        </Button>
+                        
                         <Button color="inherit" component={Link} to="/login">
                             Login
                         </Button>
