@@ -1,8 +1,9 @@
-const URL = "http://localhost:5000/api/courses";
+const coursesURL = "http://localhost:5000/api/courses";
 
+// Creating course
 export async function saveCourse(courseData) {
     try {
-        const response = await fetch(`${URL}/saveCourse`, {
+        const response = await fetch(`${coursesURL}/saveCourse`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
