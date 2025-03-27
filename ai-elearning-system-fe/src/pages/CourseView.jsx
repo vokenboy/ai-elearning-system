@@ -18,18 +18,19 @@ import {
     DialogActions,
     DialogContent,
 } from "@mui/material";
-import { saveCourse } from "../components/saveCourse";
+import { saveCourse } from "../api/course/course";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import CourseCreation from "../components/CourseCreation";
 
 
 const CourseView = () => {
     const [courses, setCourses] = useState([]);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [difficulty, setDifficulty] = useState("");
-    const [open, setOpen] = useState(false);
-    
+    const [openDialog, setOpenDialog] = useState(false);
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch("http://localhost:5000/api/courses")
@@ -38,100 +39,35 @@ const CourseView = () => {
             .catch((err) => console.error("Error fetching courses:", err));
     }, []);
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
 
-        const newCourse = {
-                title,
-                description,
-                difficulty,
-            };
-    
-        console.log("Saving course:", newCourse);
-
-        try {
-            const response = await saveCourse(newCourse);
-            setSuccess("Course created successfully");
-            console.log("Course creation successful", response);
-            handleClose();
-        } catch (err) {
-            setError(err.message);
-            console.error("Course creation error:", err);
-        }
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
     };
-    const handleChange = (event) => {
-        setDifficulty(event.target.value);
-      };
 
-    const handleClickOpen = () => {
-        setOpen(true);
-      };
-    
-      const handleClose = () => {
-        setOpen(false);
-      };
-    
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    const handleNavigate = (courseID) => {
+        navigate(`/courses/${courseID}/content`);
+    };
+
     return (
         <Container sx={{ mt: 5 }}>
             <Typography variant="h4" align="center" gutterBottom>
                 Course List
             </Typography>
 
-                <Grid item xl={6} md={6} sm={12} xs={12}>
-                    <Button variant="contained" onClick={handleClickOpen}>
-                        Create Course
-                    </Button>
-                </Grid>
-                <Dialog onClose={handleClose} open={open}> 
-                    <DialogTitle>Create Course</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            label="Title"
-                            type="text"
-                            placeholder="Add course title"
-                            variant="outlined"
-                            fullWidth
-                            required
-                            margin="dense"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                        <TextField
-                            label="Description"
-                            variant="outlined"
-                            type="text"
-                            placeholder="Add description for the course"
-                            fullWidth
-                            margin="dense"
-                            required
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            multiline
-                        />
-                        <FormControl fullWidth margin="dense">
-                            <InputLabel id="select-difficulty-field">Difficulty</InputLabel>
-                            <Select
-                                labelId="select-difficulty-field"
-                                id="select-difficulty"
-                                value={difficulty}
-                                label="Difficulty"
-                                onChange={handleChange}
-                            >
-                                <MenuItem value={"Beginner"}>Beginner</MenuItem>
-                                <MenuItem value={"Intermediate"}>Intermediate</MenuItem>
-                                <MenuItem value={"Advanced"}>Advanced</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} variant="contained">Cancel</Button>
-                        <Button type="submit" onClick={handleSave} variant="contained">Create</Button>
-                    </DialogActions>
-                </Dialog>
-                
-            <Grid container spacing={6} justifyContent="center"> 
+            <Grid item xl={6} md={6} sm={12} xs={12}>
+                <Button variant="contained" onClick={handleOpenDialog}>
+                    Create Course
+                </Button>
+            </Grid>
+            <CourseCreation 
+                    open={openDialog} 
+                    onClose={handleCloseDialog} 
+                />
+            <Grid container spacing={6} justifyContent="center">
                 {courses.map((course) => (
                     <Grid item key={course._id} xs={12} sm={6} md={4} lg={3}>
                         <Card
@@ -159,7 +95,8 @@ const CourseView = () => {
                             </CardContent>
                             <Button
                                 variant="contained"
-                                sx={{ mt: "auto", alignSelf: "center" }} 
+                                sx={{ mt: "auto", alignSelf: "center" }}
+                                onClick={() => handleNavigate(course._id)}
                             >
                                 View Course
                             </Button>
