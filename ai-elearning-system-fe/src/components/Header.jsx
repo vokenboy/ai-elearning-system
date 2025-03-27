@@ -30,9 +30,16 @@ const Header = () => {
 />
 <div style={{ flexGrow: 1 }} />
                 {authenticated ? (
+                    <>
+                    <Button color="inherit" onClick={() => navigate("/test")}>
+                        Courses
+                    </Button>
+
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
                     </Button>
+                    
+                    </>
                 ) : (
                     <>
                         <Button color="inherit" component={Link} to="/login">
