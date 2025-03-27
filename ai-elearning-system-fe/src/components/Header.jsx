@@ -29,6 +29,9 @@ const Header = () => {
     onClick={() => navigate("/")} // Clicking the logo navigates home
 />
 <div style={{ flexGrow: 1 }} />
+                 <Button color="inherit" component={Link} to="/courses">
+                            Courses
+                 </Button>
                 {authenticated ? (
                     <>
                     <Button color="inherit" onClick={() => navigate("/test")}>
@@ -42,12 +45,14 @@ const Header = () => {
                     </>
                 ) : (
                     <>
+                        
                         <Button color="inherit" component={Link} to="/login">
                             Login
                         </Button>
                         <Button color="inherit" component={Link} to="/register">
                             Register
                         </Button>
+                       
                     </>
                 )}
             </Toolbar>

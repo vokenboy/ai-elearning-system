@@ -21,3 +21,4 @@ const CourseView = () => {
         }
 
 export default CourseView;
+

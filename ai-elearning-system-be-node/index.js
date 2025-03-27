@@ -4,8 +4,10 @@ require("dotenv").config();
 const connectToDatabase = require("./db");
 
 const userRoutes = require("./routes/user.Route");
+
 const courseRoutes = require("./routes/course.Route");
 const topicRoutes = require("./routes/topic.Route");
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,7 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/topic", topicRoutes);
+
 
 const startServer = async () => {
     await connectToDatabase();
