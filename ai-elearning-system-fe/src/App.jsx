@@ -5,8 +5,6 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CourseView from "./pages/CourseView";
 import { AuthProvider } from "./context/authContext";
-import CourseView from "./pages/CourseView";
-import CourseContent from "./pages/CourseContent";
 
 function App() {
     console.log("App component rendering");
@@ -24,7 +22,7 @@ function App() {
                             <Route path="/" element={<Home />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="/test" element={<CourseView />} />
+                            <Route path="/courses" element={<CourseView />} />
                         </Routes>
                     </div>
                 </div>
