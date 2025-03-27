@@ -42,7 +42,9 @@ const Header = () => {
                     </>
                 ) : (
                     <>
-                        
+                        <Button color="inherit" onClick={() => navigate("/courses")}>
+                        Courses
+                    </Button>
                         <Button color="inherit" component={Link} to="/login">
                             Login
                         </Button>
