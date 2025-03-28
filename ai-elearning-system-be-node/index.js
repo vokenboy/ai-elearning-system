@@ -7,9 +7,8 @@ const userRoutes = require("./routes/user.Route");
 const courseRoutes = require("./routes/course.routes");
 const contentRoutes = require("./routes/content.Route");
 
-
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(
