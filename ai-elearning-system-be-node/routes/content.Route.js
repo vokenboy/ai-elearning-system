@@ -7,8 +7,8 @@ const {
 
 const router = express.Router();
 
-router.post("/addContent", addContent);
 router.get("/", getContent);
+router.post("/addContent", addContent);
 router.get("/:courseId", getContentByCourseId);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const contentURL = "http://localhost:5000/api/contents";
+const contentURL = "http://localhost:8000/api/contents";
 
 export const addContent = async (contentData) => {
     try {
@@ -12,6 +12,24 @@ export const addContent = async (contentData) => {
             const errorData = await response.json();
             throw new Error(
                 errorData.error || "Failed to add content to course"
+            );
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getContentByCourseId = async (courseId) => {
+    try {
+        const response = await fetch(`${contentURL}/${courseId}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.error ||
+                    `Failed to fetch content for course ${courseId}`
             );
         }
 

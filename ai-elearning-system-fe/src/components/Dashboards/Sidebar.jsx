@@ -43,11 +43,15 @@ const Sidebar = ({ topics = [], onTopicSelect }) => {
         <Box
             sx={{
                 width: collapsed ? 80 : 260,
-                minHeight: "100vh",
+                height: "100vh",
                 bgcolor: "background.paper",
                 borderRight: "1px solid #e0e0e0",
-                position: "relative",
+                position: "fixed",
+                top: "64px",
+                left: 0,
+                overflowY: "auto",
                 transition: "width 0.2s ease-in-out",
+                zIndex: 1100,
             }}
         >
             <Box
