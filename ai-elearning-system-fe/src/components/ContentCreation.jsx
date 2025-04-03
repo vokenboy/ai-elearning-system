@@ -16,7 +16,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { addContent } from "../api/course/content";
 
-const ContentCreation = ({ open, onClose }) => {
+const ContentCreation = ({ open, onClose, onSave}) => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const { courseId } = useParams();
@@ -66,6 +66,7 @@ const ContentCreation = ({ open, onClose }) => {
                 };
                 return addContent(content);
             });
+            
 
             await Promise.all(savePromises);
 
@@ -73,6 +74,7 @@ const ContentCreation = ({ open, onClose }) => {
             console.log("Content added to the course");
             // Reset form after successful save
             setInputFields([{ topic: "", language: "", description: "", tags: [] }]);
+            onSave();
         } catch (err) {
             setError(err.message || "Failed to add content to the course");
             console.error("Content failed to add:", err);
