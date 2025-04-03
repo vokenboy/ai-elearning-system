@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/Dashboards/DashboardLayout";
 import { getContentByCourseId } from "../api/content/contentAPI";
+import MarkdownRenderer from "../components/MarkdownRender";
 import { generateTask } from "../api/task/taskAPI";
 import {
     CircularProgress,
@@ -10,7 +11,6 @@ import {
     Container,
     Button,
 } from "@mui/material";
-import ReactMarkdown from "react-markdown";
 
 const CourseContent = () => {
     const { courseId } = useParams();
@@ -53,6 +53,8 @@ const CourseContent = () => {
                 level: selectedTopic.level || "beginner",
             };
 
+            console.log("Task Payload:", taskPayload);
+
             const taskResult = await generateTask(taskPayload);
 
             navigate(`/courses/${courseId}/task/${selectedTopic._id}`, {
@@ -89,9 +91,9 @@ const CourseContent = () => {
                 </Typography>
 
                 <Box sx={{ mb: 3 }}>
-                    <ReactMarkdown>
-                        {selectedTopic?.description || ""}
-                    </ReactMarkdown>
+                    <MarkdownRenderer
+                        content={selectedTopic?.description || ""}
+                    />
                 </Box>
 
                 {selectedTopic?.task === true && (
