@@ -1,9 +1,13 @@
-import { useParams } from "react-router-dom";
 import { useState } from "react";
-import DashboardLayout from "../components/Dashboards/DashboardLayout";
+import { Grid, Typography, Button, Box, Container } from "@mui/material";
+import CourseCard from "../components/CourseCard";
+import CourseCreation from "../components/Forms/CourseForm";
 
-const CourseContent = () => {
-    const { courseId } = useParams();
+const CourseList = () => {
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => setOpenDialog(true);
+    const handleCloseDialog = () => setOpenDialog(false);
 
     const hardcodedCourses = [
         {
@@ -55,35 +59,35 @@ const CourseContent = () => {
         },
     ];
 
-    const course = hardcodedCourses.find((c) => c._id === courseId);
-
-    const [selectedTopicId, setSelectedTopicId] = useState(
-        course?.topics[0]?.id || ""
-    );
-
-    const selectedTopic = course?.topics.find((t) => t.id === selectedTopicId);
-
-    if (!course) {
-        return <h2>Course not found</h2>;
-    }
-
     return (
-        <DashboardLayout
-            topics={course.topics}
-            onTopicSelect={(id) => setSelectedTopicId(id)}
-        >
-            <h2>{selectedTopic?.title}</h2>
-            <p>
-                <strong>Description:</strong> {selectedTopic?.description}
-            </p>
-            <p>
-                <strong>Theory:</strong> {selectedTopic?.theory}
-            </p>
-            <p>
-                <strong>Tags:</strong> {selectedTopic?.tags.join(", ")}
-            </p>
-        </DashboardLayout>
+        <Container maxWidth="xl">
+            {/* <Button
+                variant="contained"
+                onClick={handleOpenDialog}
+                sx={{ mb: 2 }}
+            >
+                Create Course
+            </Button> */}
+
+            <CourseCreation open={openDialog} onClose={handleCloseDialog} />
+
+            <Grid container spacing={3}>
+                {hardcodedCourses.map((course) => (
+                    <Grid
+                        item
+                        key={course._id}
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        lg={3}
+                        sx={{ display: "flex" }}
+                    >
+                        <CourseCard course={course} />
+                    </Grid>
+                ))}
+            </Grid>
+        </Container>
     );
 };
 
-export default CourseContent;
+export default CourseList;

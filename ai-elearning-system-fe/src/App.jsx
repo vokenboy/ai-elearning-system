@@ -4,31 +4,39 @@ import Header from "./components/Header";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { AuthProvider } from "./context/authContext";
-import CourseView from "./pages/CourseView";
+import CourseList from "./pages/CourseList";
 import CourseContent from "./pages/CourseContent";
 import MockupTaskPage from "./pages/MockupTaskPage";
+import DashboardLayout from "./components/Dashboards/DashboardLayout";
 
 function App() {
-    console.log("App component rendering");
-
     return (
         <AuthProvider>
             <Router>
-                <div className="app-container">
-                    <Header />
-                    <div
-                        className="content-container"
-                        style={{ paddingTop: "70px" }}
-                    >
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/courses" element={<CourseView />} /> 
-                            <Route path="/courses/:courseId/content" element={<CourseContent />} /> 
-                            <Route path="/mockup-task/:topicId" element={<MockupTaskPage />} />
-                        </Routes>
-                    </div>
+                <Header />
+                <div className="content-container">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route
+                            path="/courses"
+                            element={
+                                <DashboardLayout>
+                                    <CourseList />
+                                </DashboardLayout>
+                            }
+                        />
+                        <Route
+                            path="/courses/:courseId/content"
+                            element={<CourseContent />}
+                        />
+
+                        <Route
+                            path="/mockup-task/:topicId"
+                            element={<MockupTaskPage />}
+                        />
+                    </Routes>
                 </div>
             </Router>
         </AuthProvider>

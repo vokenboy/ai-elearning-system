@@ -1,6 +1,5 @@
 const coursesURL = "http://localhost:5000/api/courses";
 
-// Creating course
 export async function saveCourse(courseData) {
     try {
         const response = await fetch(`${coursesURL}/saveCourse`, {
