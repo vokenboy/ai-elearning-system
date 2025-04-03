@@ -32,7 +32,7 @@ const Login = () => {
 
     useEffect(() => {
         if (localStorage.getItem("jwt")) {
-            navigate("/");
+            navigate("/courses");
         }
     }, [navigate]);
 
@@ -51,7 +51,9 @@ const Login = () => {
             if (response.user) {
                 setUser(response.user);
             }
-            navigate("/");
+            console.log("Login successful:", response);
+            console.log("User data:", response.jwt);
+            navigate("/courses");
         } catch (err) {
             setError(err.message);
             console.error("Login failed:", err.message);

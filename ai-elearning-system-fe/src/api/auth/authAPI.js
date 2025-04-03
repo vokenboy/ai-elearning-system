@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api/users";
+const API_BASE_URL = "http://localhost:8000/api/users";
 
 export async function registerUser(userData) {
     try {
@@ -38,10 +38,8 @@ export async function loginUser(credentials) {
 
         const data = await response.json();
 
-        // Store token in localStorage
         localStorage.setItem("jwt", data.token);
 
-        // If user data is included in the response, store that too
         if (data.user) {
             localStorage.setItem("user", JSON.stringify(data.user));
         }

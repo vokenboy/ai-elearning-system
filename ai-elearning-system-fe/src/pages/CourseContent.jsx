@@ -82,12 +82,12 @@ const CourseContent = () => {
                     </Button>
                 )}
 
-                <Typography variant="body1" paragraph>
+                {/* <Typography variant="body1" paragraph>
                     <strong>Tags:</strong>{" "}
                     {selectedTopic?.tags?.length > 0
                         ? selectedTopic.tags.join(", ")
                         : "None"}
-                </Typography>
+                </Typography> */}
             </Container>
         </DashboardLayout>
     );

@@ -9,13 +9,16 @@ import {
     Avatar,
     Paper,
     Popover,
+    Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import icon from "./icon.png";
 import ProfileMenu from "./ProfileMenu";
+import { useAuth } from "../context/authContext";
 
 const Header = () => {
     const navigate = useNavigate();
+    const { authenticated, user } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleAvatarClick = (event) => {
@@ -63,38 +66,66 @@ const Header = () => {
                         />
                     </Paper>
 
-                    <IconButton onClick={handleAvatarClick}>
-                        <Avatar
-                            variant="square"
-                            sx={{
-                                bgcolor: "#d81b60",
-                                borderRadius: "10px",
-                            }}
-                        >
-                            V
-                        </Avatar>
-                    </IconButton>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        {!authenticated ? (
+                            <>
+                                <Button
+                                    color="inherit"
+                                    onClick={() => navigate("/login")}
+                                    sx={{ textTransform: "none" }}
+                                >
+                                    Login
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="inherit"
+                                    onClick={() => navigate("/register")}
+                                    sx={{
+                                        textTransform: "none",
+                                        borderRadius: "8px",
+                                    }}
+                                >
+                                    Register
+                                </Button>
+                            </>
+                        ) : (
+                            <IconButton onClick={handleAvatarClick}>
+                                <Avatar
+                                    variant="square"
+                                    sx={{
+                                        bgcolor: "#d81b60",
+                                        borderRadius: "10px",
+                                    }}
+                                >
+                                    {user?.name?.charAt(0)?.toUpperCase() ||
+                                        "U"}
+                                </Avatar>
+                            </IconButton>
+                        )}
+                    </Box>
                 </Toolbar>
             </AppBar>
 
-            <Popover
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                }}
-                transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                }}
-                PaperProps={{
-                    sx: { mt: 1 },
-                }}
-            >
-                <ProfileMenu />
-            </Popover>
+            {authenticated && (
+                <Popover
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                    }}
+                    transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                    }}
+                    PaperProps={{
+                        sx: { mt: 1 },
+                    }}
+                >
+                    <ProfileMenu />
+                </Popover>
+            )}
         </>
     );
 };

@@ -12,8 +12,18 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const ProfileDropDown = () => {
+    const { logout, user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
+
     return (
         <Paper
             elevation={6}
@@ -45,13 +55,13 @@ const ProfileDropDown = () => {
                         fontSize: "1.5rem",
                     }}
                 >
-                    V
+                    {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </Avatar>
                 <Typography fontWeight={600} mt={1}>
-                    Vilius Tamašauskas
+                    {user?.name || "User"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    @vokenboy • Joined April 2025
+                    @{user?.username || "guest"} • Joined April 2025
                 </Typography>
             </Box>
 
@@ -72,7 +82,7 @@ const ProfileDropDown = () => {
 
                 <Divider sx={{ my: 1 }} />
 
-                <ListItemButton>
+                <ListItemButton onClick={handleLogout}>
                     <ListItemIcon>
                         <LogoutIcon />
                     </ListItemIcon>
