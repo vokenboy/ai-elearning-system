@@ -1,6 +1,6 @@
 const express = require("express");
 const Course = require("../models/course.Model");
-const { saveCourse } = require("../controllers/course.Controller");
+const { saveCourse, deleteCourse } = require("../controllers/course.Controller");
 
 const router = express.Router();
 
@@ -16,5 +16,8 @@ router.get("/", async (req, res) => {
 
 // Sukurti naują kursą
 router.post("/saveCourse", saveCourse);
+
+// Ištrinti kursą pagal ID
+router.delete("/:id", deleteCourse);
 
 module.exports = router;

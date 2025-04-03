@@ -52,6 +52,32 @@ const CourseView = () => {
         navigate(`/courses/${courseID}/content`);
     };
 
+    const handleDelete = async (courseID) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this course?");
+        
+        if (!isConfirmed) {
+            return;
+        }
+    
+        try {
+            const response = await fetch(`http://localhost:5000/api/courses/${courseID}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+    
+            if (response.ok) {
+              
+                setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseID));
+                alert("Course successfully deleted.");
+            } else {
+                alert("Failed to delete course.");
+            }
+        } catch (error) {
+            console.error("Error deleting course:", error);
+        }
+    };
+    
+
     return (
         <Container sx={{ mt: 5 }}>
             <Typography variant="h4" align="center" gutterBottom>
@@ -95,10 +121,18 @@ const CourseView = () => {
                             </CardContent>
                             <Button
                                 variant="contained"
-                                sx={{ mt: "auto", alignSelf: "center" }}
+                             
                                 onClick={() => handleNavigate(course._id)}
                             >
                                 View Course
+                            </Button>
+
+                            <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => handleDelete(course._id)}
+                                >
+                                    Delete
                             </Button>
                         </Card>
                     </Grid>
