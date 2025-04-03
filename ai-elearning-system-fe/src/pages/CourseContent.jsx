@@ -1,7 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/Dashboards/DashboardLayout";
 import { getContentByCourseId } from "../api/content/contentAPI";
+import { generateTask } from "../api/task/taskAPI";
 import {
     CircularProgress,
     Box,
@@ -16,6 +17,8 @@ const CourseContent = () => {
     const [topics, setTopics] = useState([]);
     const [selectedTopicId, setSelectedTopicId] = useState("");
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchContent = async () => {
@@ -37,6 +40,28 @@ const CourseContent = () => {
     }, [courseId]);
 
     const selectedTopic = topics.find((t) => t._id === selectedTopicId);
+
+    const handleTaskClick = async () => {
+        if (!selectedTopic) return;
+
+        try {
+            const taskPayload = {
+                topic: selectedTopic.topic,
+                language: selectedTopic.language || "JavaScript",
+                description: selectedTopic.description || "",
+                tags: selectedTopic.tags || [],
+                level: selectedTopic.level || "beginner",
+            };
+
+            const taskResult = await generateTask(taskPayload);
+
+            navigate(`/courses/${courseId}/task/${selectedTopic._id}`, {
+                state: { taskData: taskResult, topic: selectedTopic.topic },
+            });
+        } catch (err) {
+            console.error("Task generation failed:", err);
+        }
+    };
 
     if (loading) {
         return (
@@ -74,20 +99,11 @@ const CourseContent = () => {
                         variant="contained"
                         color="primary"
                         sx={{ mb: 3 }}
-                        onClick={() =>
-                            console.log("Trigger AI task solving flow...")
-                        }
+                        onClick={handleTaskClick}
                     >
                         Task
                     </Button>
                 )}
-
-                {/* <Typography variant="body1" paragraph>
-                    <strong>Tags:</strong>{" "}
-                    {selectedTopic?.tags?.length > 0
-                        ? selectedTopic.tags.join(", ")
-                        : "None"}
-                </Typography> */}
             </Container>
         </DashboardLayout>
     );

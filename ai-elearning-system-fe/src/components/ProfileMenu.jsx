@@ -10,7 +10,7 @@ import {
     Typography,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import FeedIcon from "@mui/icons-material/Feed";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,10 @@ const ProfileDropDown = () => {
     const handleLogout = () => {
         logout();
         navigate("/login");
+    };
+
+    const handleCourseClick = () => {
+        navigate("/courses");
     };
 
     return (
@@ -73,12 +77,19 @@ const ProfileDropDown = () => {
                     <ListItemText primary="Profile" />
                 </ListItemButton>
 
-                <ListItemButton>
+                <ListItemButton onClick={handleCourseClick}>
+                    <ListItemIcon>
+                        <FeedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Courses" />
+                </ListItemButton>
+
+                {/* <ListItemButton>
                     <ListItemIcon>
                         <GroupAddIcon />
                     </ListItemIcon>
                     <ListItemText primary="Invite friends" />
-                </ListItemButton>
+                </ListItemButton> */}
 
                 <Divider sx={{ my: 1 }} />
 

@@ -1,4 +1,4 @@
-const contentURL = "http://localhost:8000/api/contents";
+const contentURL = "http://localhost:5000/api/contents";
 
 export const addContent = async (contentData) => {
     try {

@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import { AuthProvider } from "./context/authContext";
 import CourseList from "./pages/CourseList";
 import CourseContent from "./pages/CourseContent";
-import MockupTaskPage from "./pages/MockupTaskPage";
+import TaskInterface from "./pages/TaskInterface";
 import DashboardLayout from "./components/Dashboards/DashboardLayout";
 
 function App() {
@@ -33,8 +33,8 @@ function App() {
                         />
 
                         <Route
-                            path="/mockup-task/:topicId"
-                            element={<MockupTaskPage />}
+                            path="/courses/:courseId/task/:topicId"
+                            element={<TaskInterface />}
                         />
                     </Routes>
                 </div>

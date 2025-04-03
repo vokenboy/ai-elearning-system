@@ -1,4 +1,4 @@
-const coursesURL = "http://localhost:8000/api/courses";
+const coursesURL = "http://localhost:5000/api/courses";
 
 export async function saveCourse(courseData) {
     try {
