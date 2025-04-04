@@ -6,10 +6,10 @@ const ContentSchema = new mongoose.Schema(
         language: { type: String, required: true },
         description: { type: String, required: true },
         tags: { type: Array, required: true },
-        courseId: { type: String},
+        courseId: { type: String },
     },
     { timestamps: true }
 );
 
 const Content = mongoose.model("Content", ContentSchema);
-module.exports = Content
+module.exports = Content;
