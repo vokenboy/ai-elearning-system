@@ -31,3 +31,12 @@ exports.getContent = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.getContentByCourseId = async (req, res) => {
+    try {
+        const contents = await Content.find({ courseId: req.params.courseId });
+        res.json(contents);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};

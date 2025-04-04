@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import { AuthProvider } from "./context/authContext";
 import CourseView from "./pages/CourseView";
 import CourseContent from "./pages/CourseContent";
+import MockupTaskPage from "./pages/MockupTaskPage";
 
 function App() {
     console.log("App component rendering");
@@ -25,6 +26,7 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/courses" element={<CourseView />} /> 
                             <Route path="/courses/:courseId/content" element={<CourseContent />} /> 
+                            <Route path="/mockup-task/:topicId" element={<MockupTaskPage />} />
                         </Routes>
                     </div>
                 </div>
