@@ -16,7 +16,7 @@ import ContentCreation from "../components/ContentCreation";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { generateTask } from "../api/task/taskAPI";
-import ReactMarkdown from "react-markdown"; // Import ReactMarkdown for rendering Markdown
+import ReactMarkdown from "react-markdown";
 
 const CourseContent = () => {
     const [openDialog, setOpenDialog] = useState(false);
