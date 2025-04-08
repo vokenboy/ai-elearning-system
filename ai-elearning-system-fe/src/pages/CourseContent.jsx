@@ -16,6 +16,7 @@ import {
 import ContentCreation from "../components/ContentCreation";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContentByCourseId } from "../api/content/contentAPI";
+import { generateTask } from "../api/task/taskAPI";
 
 const CourseContent = () => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -48,6 +49,26 @@ const CourseContent = () => {
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
+    };
+
+    const handleGoToTask = async (topic) => {
+        try {
+            const payload = {
+                topic: topic.topic,
+                language: topic.language,
+                description: topic.description,
+                tags: topic.tags,
+                level: topic.level || "begginer",
+            };
+
+            const taskData = await generateTask(payload);
+
+            navigate(`/courses/${params.courseId}/task/${topic._id}`, {
+                state: { taskData, topic: topic.topic },
+            });
+        } catch (error) {
+            console.error("Error generating task:", error);
+        }
     };
 
     return (
@@ -113,9 +134,7 @@ const CourseContent = () => {
                                                 color="primary"
                                                 sx={{ mt: 2 }}
                                                 onClick={() =>
-                                                    navigate(
-                                                        `/mockup-task/${topic._id}`
-                                                    )
+                                                    handleGoToTask(topic)
                                                 }
                                             >
                                                 Go to Topic
