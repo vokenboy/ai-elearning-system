@@ -6,7 +6,6 @@ import {
     Button,
     List,
     ListItem,
-    ListItemText,
     CircularProgress,
     Paper,
     AccordionSummary,
@@ -17,6 +16,7 @@ import ContentCreation from "../components/ContentCreation";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { generateTask } from "../api/task/taskAPI";
+import ReactMarkdown from "react-markdown"; // Import ReactMarkdown for rendering Markdown
 
 const CourseContent = () => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -117,17 +117,14 @@ const CourseContent = () => {
                                     }}
                                 >
                                     <AccordionSummary>
-                                        <ListItemText
-                                            primary={topic.topic}
-                                            secondary={`Language: ${
-                                                topic.language
-                                            } | Tags: ${topic.tags.join(", ")}`}
-                                        />
+                                        <Typography variant="subtitle1">
+                                            {topic.topic}
+                                        </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography>
+                                        <ReactMarkdown>
                                             {topic.description}
-                                        </Typography>
+                                        </ReactMarkdown>
                                         {expanded === index && (
                                             <Button
                                                 variant="contained"
