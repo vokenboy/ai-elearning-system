@@ -11,34 +11,32 @@ import {
     Paper,
     AccordionSummary,
     AccordionDetails,
-    Accordion
+    Accordion,
 } from "@mui/material";
-import axios from "axios";
 import ContentCreation from "../components/ContentCreation";
-import { useParams, useNavigate } from "react-router-dom";  // Import useNavigate for routing
+import { useParams, useNavigate } from "react-router-dom";
+import { getContentByCourseId } from "../api/content/contentAPI";
 
 const CourseContent = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [expanded, setExpanded] = useState(false); // Track expanded state
+    const [expanded, setExpanded] = useState(false);
     const params = useParams();
-    const navigate = useNavigate();  // Initialize navigate hook
+    const navigate = useNavigate();
 
-    // Fetch topics when courseId changes
     useEffect(() => {
-        fetchTopics();
-    }, []);
+        loadTopics();
+    }, [params.courseId]);
 
-    const fetchTopics = async () => {
+    const loadTopics = async () => {
         const courseId = params.courseId;
-
         if (!courseId) return;
-        
+
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:5000/api/contents/${courseId}`);
-            setTopics(response.data);
+            const data = await getContentByCourseId(courseId);
+            setTopics(data);
         } catch (error) {
             console.error("Error fetching topics:", error);
         }
@@ -58,17 +56,18 @@ const CourseContent = () => {
                 Course Content
             </Typography>
 
-            {/* Add Content Button */}
             <Grid item xl={6} md={6} sm={12} xs={12}>
                 <Button variant="contained" onClick={handleOpenDialog}>
                     Add Content
                 </Button>
             </Grid>
 
-            {/* Add Content Dialog */}
-            <ContentCreation open={openDialog} onClose={handleCloseDialog} onSave={fetchTopics} />
+            <ContentCreation
+                open={openDialog}
+                onClose={handleCloseDialog}
+                onSave={loadTopics}
+            />
 
-            {/* Topics List */}
             <Paper elevation={3} sx={{ mt: 4, p: 2 }}>
                 <Typography variant="h6" gutterBottom>
                     Topics:
@@ -78,30 +77,46 @@ const CourseContent = () => {
                 ) : topics.length > 0 ? (
                     <List>
                         {topics.map((topic, index) => (
-                            <ListItem key={topic._id} divider sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                                {/* Accordion takes full width */}
+                            <ListItem
+                                key={topic._id}
+                                divider
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                }}
+                            >
                                 <Accordion
-                                    expanded={expanded === index} // Manage expansion state per item
-                                    onChange={handleAccordionChange(index)} 
-                                    sx={{ width: "100%", display: "flex", flexDirection: "column" }}
+                                    expanded={expanded === index}
+                                    onChange={handleAccordionChange(index)}
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }}
                                 >
                                     <AccordionSummary>
                                         <ListItemText
-                                            primary={topic.topic} // Correct field from DB
-                                            secondary={`Language: ${topic.language} | Tags: ${topic.tags.join(", ")}`}
+                                            primary={topic.topic}
+                                            secondary={`Language: ${
+                                                topic.language
+                                            } | Tags: ${topic.tags.join(", ")}`}
                                         />
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Typography>
                                             {topic.description}
                                         </Typography>
-                                        {/* Show Go to Topic Button when accordion is expanded */}
                                         {expanded === index && (
                                             <Button
                                                 variant="contained"
                                                 color="primary"
                                                 sx={{ mt: 2 }}
-                                                onClick={() => navigate(`/mockup-task/${topic._id}`)} // Navigate to MockupTaskPage
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/mockup-task/${topic._id}`
+                                                    )
+                                                }
                                             >
                                                 Go to Topic
                                             </Button>
@@ -112,7 +127,9 @@ const CourseContent = () => {
                         ))}
                     </List>
                 ) : (
-                    <Typography variant="body1">No topics available.</Typography>
+                    <Typography variant="body1">
+                        No topics available.
+                    </Typography>
                 )}
             </Paper>
         </Container>
