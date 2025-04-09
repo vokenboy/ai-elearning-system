@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/Header";
 import Register from "./pages/Register";
@@ -7,6 +7,9 @@ import { AuthProvider } from "./context/authContext";
 import CourseView from "./pages/CourseView";
 import CourseContent from "./pages/CourseContent";
 import TaskInterface from "./pages/TaskInterface";
+import PrivateRoute from "./components/PrivateRoute";
+import EditorCoursePage from "./pages/EditorCoursePage";
+import EditorContentPage from "./pages/EditorContentPage";
 
 function App() {
     console.log("App component rendering");
@@ -33,6 +36,10 @@ function App() {
                                 path="/courses/:courseId/task/:topicId"
                                 element={<TaskInterface />}
                             />
+                            <Route element={<PrivateRoute allowedRoles={['Admin', 'Editor']} />}>
+                                <Route path="/editor/courses" element={<EditorCoursePage />} />
+                                <Route path="/editor/courses/:courseId/content" element={<EditorContentPage />} />
+                            </Route>
                         </Routes>
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 const API_BASE_URL = "http://localhost:5000/api/users";
 
 export async function registerUser(userData) {
@@ -64,4 +65,14 @@ export function isLoggedIn() {
 export function getUser() {
     const userString = localStorage.getItem("user");
     return userString ? JSON.parse(userString) : null;
+}
+
+export function getUserRole() {
+    const userToken = localStorage.getItem("jwt");
+    let userRole = "User";
+    if(userToken){
+        const decodedToken = jwtDecode(userToken);
+        return userRole = decodedToken.role;
+    }
+    return userRole;
 }
