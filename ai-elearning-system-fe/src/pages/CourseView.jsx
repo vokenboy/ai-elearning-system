@@ -18,10 +18,9 @@ import {
     DialogActions,
     DialogContent,
 } from "@mui/material";
-import { saveCourse } from "../api/course/course";
+import { saveCourse } from "../api/course/courseAPI";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import CourseCreation from "../components/CourseCreation";
-
 
 const CourseView = () => {
     const [courses, setCourses] = useState([]);
@@ -39,7 +38,6 @@ const CourseView = () => {
             .catch((err) => console.error("Error fetching courses:", err));
     }, []);
 
-
     const handleOpenDialog = () => {
         setOpenDialog(true);
     };
@@ -53,21 +51,27 @@ const CourseView = () => {
     };
 
     const handleDelete = async (courseID) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this course?");
-        
+        const isConfirmed = window.confirm(
+            "Are you sure you want to delete this course?"
+        );
+
         if (!isConfirmed) {
             return;
         }
-    
+
         try {
-            const response = await fetch(`http://localhost:5000/api/courses/${courseID}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-    
+            const response = await fetch(
+                `http://localhost:5000/api/courses/${courseID}`,
+                {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+
             if (response.ok) {
-              
-                setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseID));
+                setCourses((prevCourses) =>
+                    prevCourses.filter((course) => course._id !== courseID)
+                );
                 alert("Course successfully deleted.");
             } else {
                 alert("Failed to delete course.");
@@ -76,7 +80,6 @@ const CourseView = () => {
             console.error("Error deleting course:", error);
         }
     };
-    
 
     return (
         <Container sx={{ mt: 5 }}>
@@ -89,10 +92,7 @@ const CourseView = () => {
                     Create Course
                 </Button>
             </Grid>
-            <CourseCreation 
-                    open={openDialog} 
-                    onClose={handleCloseDialog} 
-                />
+            <CourseCreation open={openDialog} onClose={handleCloseDialog} />
             <Grid container spacing={6} justifyContent="center">
                 {courses.map((course) => (
                     <Grid item key={course._id} xs={12} sm={6} md={4} lg={3}>
@@ -108,31 +108,39 @@ const CourseView = () => {
                             }}
                         >
                             <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography variant="h6">{course.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">
+                                <Typography variant="h6">
+                                    {course.title}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                >
                                     {course.description}
                                 </Typography>
                                 <Typography variant="body2" sx={{ mt: 1 }}>
-                                    <strong>Difficulty:</strong> {course.difficulty}
+                                    <strong>Difficulty:</strong>{" "}
+                                    {course.difficulty}
                                 </Typography>
                                 <Typography variant="body2">
-                                    <strong>Created at:</strong> {new Date(course.createdAt).toLocaleDateString()}
+                                    <strong>Created at:</strong>{" "}
+                                    {new Date(
+                                        course.createdAt
+                                    ).toLocaleDateString()}
                                 </Typography>
                             </CardContent>
                             <Button
                                 variant="contained"
-                             
                                 onClick={() => handleNavigate(course._id)}
                             >
                                 View Course
                             </Button>
 
                             <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => handleDelete(course._id)}
-                                >
-                                    Delete
+                                variant="contained"
+                                color="error"
+                                onClick={() => handleDelete(course._id)}
+                            >
+                                Delete
                             </Button>
                         </Card>
                     </Grid>

@@ -18,8 +18,7 @@ import {
     DialogActions,
     DialogContent,
 } from "@mui/material";
-import { saveCourse } from "../api/course/course";
-
+import { saveCourse } from "../api/course/courseAPI";
 
 const CourseCreation = ({ open, onClose }) => {
     const [title, setTitle] = useState("");
@@ -65,7 +64,11 @@ const CourseCreation = ({ open, onClose }) => {
                     </Typography>
                 )}
                 {success && (
-                    <Typography color="success.main" variant="body2" sx={{ mb: 2 }}>
+                    <Typography
+                        color="success.main"
+                        variant="body2"
+                        sx={{ mb: 2 }}
+                    >
                         {success}
                     </Typography>
                 )}
@@ -93,7 +96,9 @@ const CourseCreation = ({ open, onClose }) => {
                     multiline
                 />
                 <FormControl fullWidth margin="dense">
-                    <InputLabel id="select-difficulty-field">Difficulty</InputLabel>
+                    <InputLabel id="select-difficulty-field">
+                        Difficulty
+                    </InputLabel>
                     <Select
                         labelId="select-difficulty-field"
                         id="select-difficulty"
@@ -108,12 +113,17 @@ const CourseCreation = ({ open, onClose }) => {
                 </FormControl>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} variant="contained">Cancel</Button>
-                <Button type="submit"
+                <Button onClick={onClose} variant="contained">
+                    Cancel
+                </Button>
+                <Button
+                    type="submit"
                     onClick={handleSave}
                     variant="contained"
                     disabled={!title || !description || !difficulty}
-                >Create</Button>
+                >
+                    Create
+                </Button>
             </DialogActions>
         </Dialog>
     );

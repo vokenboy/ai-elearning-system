@@ -6,39 +6,38 @@ import {
     Button,
     List,
     ListItem,
-    ListItemText,
     CircularProgress,
     Paper,
     AccordionSummary,
     AccordionDetails,
-    Accordion
+    Accordion,
 } from "@mui/material";
-import axios from "axios";
 import ContentCreation from "../components/ContentCreation";
-import { useParams, useNavigate } from "react-router-dom";  // Import useNavigate for routing
+import { useParams, useNavigate } from "react-router-dom";
+import { getContentByCourseId } from "../api/content/contentAPI";
+import { generateTask } from "../api/task/taskAPI";
+import ReactMarkdown from "react-markdown";
 
 const CourseContent = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [expanded, setExpanded] = useState(false); // Track expanded state
+    const [expanded, setExpanded] = useState(false);
     const params = useParams();
-    const navigate = useNavigate();  // Initialize navigate hook
+    const navigate = useNavigate();
 
-    // Fetch topics when courseId changes
     useEffect(() => {
-        fetchTopics();
-    }, []);
+        loadTopics();
+    }, [params.courseId]);
 
-    const fetchTopics = async () => {
+    const loadTopics = async () => {
         const courseId = params.courseId;
-
         if (!courseId) return;
-        
+
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:5000/api/contents/${courseId}`);
-            setTopics(response.data);
+            const data = await getContentByCourseId(courseId);
+            setTopics(data);
         } catch (error) {
             console.error("Error fetching topics:", error);
         }
@@ -52,23 +51,44 @@ const CourseContent = () => {
         setExpanded(isExpanded ? panel : false);
     };
 
+    const handleGoToTask = async (topic) => {
+        try {
+            const payload = {
+                topic: topic.topic,
+                language: topic.language,
+                description: topic.description,
+                tags: topic.tags,
+                level: topic.level || "begginer",
+            };
+
+            const taskData = await generateTask(payload);
+
+            navigate(`/courses/${params.courseId}/task/${topic._id}`, {
+                state: { taskData, topic: topic.topic },
+            });
+        } catch (error) {
+            console.error("Error generating task:", error);
+        }
+    };
+
     return (
         <Container sx={{ mt: 5 }}>
             <Typography variant="h4" align="center" gutterBottom>
                 Course Content
             </Typography>
 
-            {/* Add Content Button */}
             <Grid item xl={6} md={6} sm={12} xs={12}>
                 <Button variant="contained" onClick={handleOpenDialog}>
                     Add Content
                 </Button>
             </Grid>
 
-            {/* Add Content Dialog */}
-            <ContentCreation open={openDialog} onClose={handleCloseDialog} onSave={fetchTopics} />
+            <ContentCreation
+                open={openDialog}
+                onClose={handleCloseDialog}
+                onSave={loadTopics}
+            />
 
-            {/* Topics List */}
             <Paper elevation={3} sx={{ mt: 4, p: 2 }}>
                 <Typography variant="h6" gutterBottom>
                     Topics:
@@ -78,30 +98,41 @@ const CourseContent = () => {
                 ) : topics.length > 0 ? (
                     <List>
                         {topics.map((topic, index) => (
-                            <ListItem key={topic._id} divider sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                                {/* Accordion takes full width */}
+                            <ListItem
+                                key={topic._id}
+                                divider
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    width: "100%",
+                                }}
+                            >
                                 <Accordion
-                                    expanded={expanded === index} // Manage expansion state per item
-                                    onChange={handleAccordionChange(index)} 
-                                    sx={{ width: "100%", display: "flex", flexDirection: "column" }}
+                                    expanded={expanded === index}
+                                    onChange={handleAccordionChange(index)}
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }}
                                 >
                                     <AccordionSummary>
-                                        <ListItemText
-                                            primary={topic.topic} // Correct field from DB
-                                            secondary={`Language: ${topic.language} | Tags: ${topic.tags.join(", ")}`}
-                                        />
+                                        <Typography variant="subtitle1">
+                                            {topic.topic}
+                                        </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography>
+                                        <ReactMarkdown>
                                             {topic.description}
-                                        </Typography>
-                                        {/* Show Go to Topic Button when accordion is expanded */}
+                                        </ReactMarkdown>
                                         {expanded === index && (
                                             <Button
                                                 variant="contained"
                                                 color="primary"
                                                 sx={{ mt: 2 }}
-                                                onClick={() => navigate(`/mockup-task/${topic._id}`)} // Navigate to MockupTaskPage
+                                                onClick={() =>
+                                                    handleGoToTask(topic)
+                                                }
                                             >
                                                 Go to Topic
                                             </Button>
@@ -112,7 +143,9 @@ const CourseContent = () => {
                         ))}
                     </List>
                 ) : (
-                    <Typography variant="body1">No topics available.</Typography>
+                    <Typography variant="body1">
+                        No topics available.
+                    </Typography>
                 )}
             </Paper>
         </Container>
