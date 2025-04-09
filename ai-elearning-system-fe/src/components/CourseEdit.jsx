@@ -1,62 +1,92 @@
 import { useEffect, useState } from "react";
 import {
-    Container,
-    Box,
-    Grid,
     Typography,
     TextField,
     InputLabel,
     FormControl,
-    FormControlLabel,
     Select,
     MenuItem,
     Button,
-    CardContent,
-    Card,
     Dialog,
     DialogTitle,
     DialogActions,
     DialogContent,
+    CircularProgress,
 } from "@mui/material";
-import { saveCourse } from "../api/course/courseAPI";
+import { getCourseById, updateCourse } from "../api/course/courseAPI";
 
-const CourseCreation = ({ open, onClose }) => {
+const CourseEdit = ({ open, onClose, courseId }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [difficulty, setDifficulty] = useState("");
-
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (open && courseId) {
+            fetchCourseData();
+        }
+    }, [open, courseId]);
+
+    const fetchCourseData = async () => {
+        setLoading(true);
+        setError("");
+
+        try {
+            const courseData = await getCourseById(courseId);
+            setTitle(courseData.title || "");
+            setDescription(courseData.description || "");
+            setDifficulty(courseData.difficulty || "");
+        } catch (err) {
+            console.error("Error fetching course:", err);
+            setError("Failed to load course data. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSave = async (e) => {
         e.preventDefault();
         setError("");
         setSuccess("");
+        setLoading(true);
 
-        const newCourse = {
+        const updatedCourse = {
             title,
             description,
             difficulty,
         };
 
-        console.log("Saving course:", newCourse);
+        console.log("Updating course:", updatedCourse);
 
         try {
-            const response = await saveCourse(newCourse);
-            setSuccess("Course created successfully");
-            console.log("Course creation successful", response);
-            handleClose();
+            await updateCourse(courseId, updatedCourse);
+            setSuccess("Course updated successfully");
+            console.log("Course update successful");
+
+            setTimeout(() => {
+                onClose(true);
+            }, 1000);
         } catch (err) {
-            setError(err.message);
-            console.error("Course creation error:", err);
+            setError(err.message || "Failed to update course");
+            console.error("Course update error:", err);
+            setLoading(false);
         }
     };
-    const handleChange = (event) => {
-        setDifficulty(event.target.value);
+
+    const handleCancel = () => {
+        onClose(false);
     };
+
     return (
-        <Dialog onClose={onClose} open={open} fullWidth maxWidth="md">
-            <DialogTitle>Create Course</DialogTitle>
+        <Dialog
+            onClose={() => onClose(false)}
+            open={open}
+            fullWidth
+            maxWidth="md"
+        >
+            <DialogTitle>Edit Course</DialogTitle>
             <DialogContent>
                 {error && (
                     <Typography color="error" variant="body2" sx={{ mb: 2 }}>
@@ -75,36 +105,39 @@ const CourseCreation = ({ open, onClose }) => {
                 <TextField
                     label="Title"
                     type="text"
-                    placeholder="Add course title"
+                    placeholder="Course title"
                     variant="outlined"
                     fullWidth
                     required
                     margin="dense"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    disabled={loading}
                 />
                 <TextField
                     label="Description"
                     variant="outlined"
                     type="text"
-                    placeholder="Add description for the course"
+                    placeholder="Course description"
                     fullWidth
                     margin="dense"
                     required
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     multiline
+                    minRows={4}
+                    disabled={loading}
                 />
-                <FormControl fullWidth margin="dense">
-                    <InputLabel id="select-difficulty-field">
+                <FormControl fullWidth margin="dense" disabled={loading}>
+                    <InputLabel id="edit-select-difficulty-field">
                         Difficulty
                     </InputLabel>
                     <Select
-                        labelId="select-difficulty-field"
-                        id="select-difficulty"
+                        labelId="edit-select-difficulty-field"
+                        id="edit-select-difficulty"
                         value={difficulty}
                         label="Difficulty"
-                        onChange={handleChange}
+                        onChange={(e) => setDifficulty(e.target.value)}
                     >
                         <MenuItem value={"Beginner"}>Beginner</MenuItem>
                         <MenuItem value={"Intermediate"}>Intermediate</MenuItem>
@@ -113,20 +146,26 @@ const CourseCreation = ({ open, onClose }) => {
                 </FormControl>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} variant="contained">
+                <Button
+                    onClick={handleCancel}
+                    variant="outlined"
+                    color="inherit"
+                    disabled={loading}
+                >
                     Cancel
                 </Button>
                 <Button
                     type="submit"
                     onClick={handleSave}
                     variant="contained"
-                    disabled={!title || !description || !difficulty}
+                    disabled={loading || !title || !description || !difficulty}
+                    startIcon={loading ? <CircularProgress size={20} /> : null}
                 >
-                    Create
+                    {loading ? "Saving..." : "Save Changes"}
                 </Button>
             </DialogActions>
         </Dialog>
     );
 };
 
-export default CourseCreation;
+export default CourseEdit;
