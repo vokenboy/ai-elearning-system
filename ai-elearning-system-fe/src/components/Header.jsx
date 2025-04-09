@@ -6,6 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import icon from "./icon.png";
+import HeaderButton from "./RoleBasedComponents";
 
 const Header = () => {
     const { authenticated, logout } = useAuth();
@@ -29,6 +30,8 @@ const Header = () => {
     onClick={() => navigate("/")} // Clicking the logo navigates home
 />
 <div style={{ flexGrow: 1 }} />
+                {/*Role-based component*/}
+                <HeaderButton allowedRoles={['Editor', 'Admin']}></HeaderButton>
                  <Button color="inherit" component={Link} to="/courses">
                             Courses
                  </Button>

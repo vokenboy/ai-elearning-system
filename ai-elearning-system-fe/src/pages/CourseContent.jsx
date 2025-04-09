@@ -12,7 +12,6 @@ import {
     AccordionDetails,
     Accordion,
 } from "@mui/material";
-import ContentCreation from "../components/ContentCreation";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { generateTask } from "../api/task/taskAPI";
@@ -44,9 +43,6 @@ const CourseContent = () => {
         setLoading(false);
     };
 
-    const handleOpenDialog = () => setOpenDialog(true);
-    const handleCloseDialog = () => setOpenDialog(false);
-
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
@@ -76,18 +72,6 @@ const CourseContent = () => {
             <Typography variant="h4" align="center" gutterBottom>
                 Course Content
             </Typography>
-
-            <Grid item xl={6} md={6} sm={12} xs={12}>
-                <Button variant="contained" onClick={handleOpenDialog}>
-                    Add Content
-                </Button>
-            </Grid>
-
-            <ContentCreation
-                open={openDialog}
-                onClose={handleCloseDialog}
-                onSave={loadTopics}
-            />
 
             <Paper elevation={3} sx={{ mt: 4, p: 2 }}>
                 <Typography variant="h6" gutterBottom>
