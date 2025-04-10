@@ -40,3 +40,34 @@ exports.getContentByCourseId = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.deleteContentById = async(req, res) => {
+    try{
+        const { contentId } = req.params;
+        const content = await Content.findByIdAndDelete(contentId);
+        if (!content) {
+            return res.status(404).json({ error: "Content not found" });
+        }
+
+        res.status(200).json({ message: "Content deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.updateContentById = async(req, res) => {
+    try{
+        const { contentId } = req.params;
+        const { topic, language, description, tags } = req.body;
+
+        const content = await Content.findByIdAndUpdate(contentId,{topic, language, description, tags});
+        if (!content) {
+            return res.status(404).json({ error: "Content not found" });
+        }
+
+        res.status(200).json({ message: "Content updated successfully" });
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
