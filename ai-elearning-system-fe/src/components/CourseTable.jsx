@@ -34,11 +34,11 @@ const CourseTable = ({ courses, onNavigate, onEdit, onDelete }) => {
                             Difficulty
                         </Typography>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                         <Typography variant="subtitle1" fontWeight="bold">
                             Created At
                         </Typography>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell align="center">
                         <Typography variant="subtitle1" fontWeight="bold">
                             Actions
@@ -61,11 +61,11 @@ const CourseTable = ({ courses, onNavigate, onEdit, onDelete }) => {
                                     : course.description || "No description"}
                             </TableCell>
                             <TableCell>{course.difficulty}</TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 {new Date(
                                     course.createdAt
                                 ).toLocaleDateString()}
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="center">
                                 <Box
                                     sx={{

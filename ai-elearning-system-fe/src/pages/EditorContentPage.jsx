@@ -4,117 +4,201 @@ import {
     Grid,
     Typography,
     Button,
-    List,
-    ListItem,
-    ListItemText,
+    Box,
     CircularProgress,
-    Paper,
-    AccordionSummary,
-    AccordionDetails,
-    Accordion
+    Alert,
 } from "@mui/material";
-import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
 import ContentCreation from "../components/ContentCreation";
-import { useParams, useNavigate } from "react-router-dom";  // Import useNavigate for routing
+import ContentEdit from "../components/ContentEdit";
+import TopicCard from "../components/TopicCard";
+import { useParams } from "react-router-dom";
+import {
+    getContentByCourseId,
+    deleteTopicById,
+} from "../api/content/contentAPI";
+import { getCourseById } from "../api/course/courseAPI";
 
 const EditorContentPage = () => {
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openCreateDialog, setOpenCreateDialog] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [expanded, setExpanded] = useState(false); // Track expanded state
-    const params = useParams();
-    const navigate = useNavigate();  // Initialize navigate hook
+    const [selectedTopic, setSelectedTopic] = useState(null);
+    const [courseDetails, setCourseDetails] = useState(null);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
-    // Fetch topics when courseId changes
+    const params = useParams();
+    const courseId = params.courseId;
+
     useEffect(() => {
-        fetchTopics();
+        fetchCourseDetails();
+        fetchCourseTopics();
     }, []);
 
-    const fetchTopics = async () => {
-        const courseId = params.courseId;
-
+    const fetchCourseDetails = async () => {
         if (!courseId) return;
-        
-        setLoading(true);
+
         try {
-            const response = await axios.get(`http://localhost:5000/api/contents/${courseId}`);
-            setTopics(response.data);
+            const courseData = await getCourseById(courseId);
+            setCourseDetails(courseData);
+        } catch (error) {
+            console.error("Error fetching course details:", error);
+            setError("Failed to load course details. Please try again.");
+        }
+    };
+
+    const fetchCourseTopics = async () => {
+        if (!courseId) return;
+
+        setLoading(true);
+        setError("");
+
+        try {
+            const topicsData = await getContentByCourseId(courseId);
+            setTopics(topicsData);
         } catch (error) {
             console.error("Error fetching topics:", error);
+            setError("Failed to load course content. Please try again.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
-    const handleOpenDialog = () => setOpenDialog(true);
-    const handleCloseDialog = () => setOpenDialog(false);
-
-    const handleAccordionChange = (panel) => (event, isExpanded) => {
-        setExpanded(isExpanded ? panel : false);
+    const handleOpenCreateDialog = () => {
+        setOpenCreateDialog(true);
     };
+
+    const handleCloseCreateDialog = (refresh = false) => {
+        setOpenCreateDialog(false);
+        if (refresh) {
+            fetchCourseTopics();
+            setSuccess("Content topic successfully created!");
+            clearMessages();
+        }
+    };
+
+    const handleOpenEditDialog = (topic) => {
+        setSelectedTopic(topic);
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = (refresh = false) => {
+        setOpenEditDialog(false);
+        setSelectedTopic(null);
+        if (refresh) {
+            fetchCourseTopics();
+            setSuccess("Content topic successfully updated!");
+            clearMessages();
+        }
+    };
+
+    const handleDeleteTopic = async (topic) => {
+        const isConfirmed = window.confirm(
+            `Are you sure you want to delete "${topic.topic}"? This action cannot be undone.`
+        );
+
+        if (!isConfirmed) {
+            return;
+        }
+
+        try {
+            await deleteTopicById(topic._id);
+            fetchCourseTopics();
+            setSuccess("Content topic successfully deleted!");
+            clearMessages();
+        } catch (error) {
+            console.error("Error deleting topic:", error);
+            setError("Failed to delete content topic. Please try again.");
+        }
+    };
+
+    const clearMessages = () => {
+        setTimeout(() => {
+            setSuccess("");
+            setError("");
+        }, 5000);
+    };
+
+    const CourseHeader = () => (
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+                flexWrap: { xs: "wrap", sm: "nowrap" },
+                gap: 2,
+            }}
+        >
+            <Box>
+                <Typography variant="h4" gutterBottom>
+                    {courseDetails?.title || "Course Content"}
+                </Typography>
+                {courseDetails && (
+                    <Typography variant="subtitle1" color="text.secondary">
+                        {courseDetails.description}
+                    </Typography>
+                )}
+            </Box>
+            <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleOpenCreateDialog}
+            >
+                Add Topic
+            </Button>
+        </Box>
+    );
 
     return (
-        <Container sx={{ mt: 5 }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Course Content
-            </Typography>
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            <CourseHeader />
 
-            {/* Add Content Button */}
-            <Grid item xl={6} md={6} sm={12} xs={12}>
-                <Button variant="contained" onClick={handleOpenDialog}>
-                    Add Content
-                </Button>
-            </Grid>
+            {error && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                    {error}
+                </Alert>
+            )}
+            {success && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                    {success}
+                </Alert>
+            )}
 
-            {/* Add Content Dialog */}
-            <ContentCreation open={openDialog} onClose={handleCloseDialog} onSave={fetchTopics} />
-
-            {/* Topics List */}
-            <Paper elevation={3} sx={{ mt: 4, p: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                    Topics:
-                </Typography>
-                {loading ? (
+            {loading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
                     <CircularProgress />
-                ) : topics.length > 0 ? (
-                    <List>
-                        {topics.map((topic, index) => (
-                            <ListItem key={topic._id} divider sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                                {/* Accordion takes full width */}
-                                <Accordion
-                                    expanded={expanded === index} // Manage expansion state per item
-                                    onChange={handleAccordionChange(index)} 
-                                    sx={{ width: "100%", display: "flex", flexDirection: "column" }}
-                                >
-                                    <AccordionSummary>
-                                        <ListItemText
-                                            primary={topic.topic} // Correct field from DB
-                                            secondary={`Language: ${topic.language} | Tags: ${topic.tags.join(", ")}`}
-                                        />
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Typography>
-                                            {topic.description}
-                                        </Typography>
-                                        {/* Show Go to Topic Button when accordion is expanded */}
-                                        {expanded === index && (
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                sx={{ mt: 2 }}
-                                                onClick={() => navigate(`/mockup-task/${topic._id}`)} // Navigate to MockupTaskPage
-                                            >
-                                                Go to Topic
-                                            </Button>
-                                        )}
-                                    </AccordionDetails>
-                                </Accordion>
-                            </ListItem>
-                        ))}
-                    </List>
-                ) : (
-                    <Typography variant="body1">No topics available.</Typography>
-                )}
-            </Paper>
+                </Box>
+            ) : (
+                <Grid container spacing={3}>
+                    {topics.map((topic) => (
+                        <Grid item xs={12} sm={12} md={6} key={topic._id}>
+                            <TopicCard
+                                topic={topic}
+                                onEdit={() => handleOpenEditDialog(topic)}
+                                onDelete={() => handleDeleteTopic(topic)}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
+
+            <ContentCreation
+                open={openCreateDialog}
+                onClose={handleCloseCreateDialog}
+                courseId={courseId}
+            />
+
+            {selectedTopic && (
+                <ContentEdit
+                    open={openEditDialog}
+                    onClose={handleCloseEditDialog}
+                    topic={selectedTopic}
+                    courseId={courseId}
+                />
+            )}
         </Container>
     );
 };
