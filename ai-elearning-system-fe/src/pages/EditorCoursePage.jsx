@@ -2,49 +2,90 @@ import { useEffect, useState } from "react";
 import {
     Container,
     Box,
-    Grid,
     Typography,
-    TextField,
-    InputLabel,
-    FormControl,
-    FormControlLabel,
-    Select,
-    MenuItem,
     Button,
-    CardContent,
-    Card,
-    Dialog,
-    DialogTitle,
-    DialogActions,
-    DialogContent,
+    Paper,
+    TableContainer,
+    CircularProgress,
 } from "@mui/material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import CourseCreation from "../components/CourseCreation";
+import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
+import {
+    getAllCourses,
+    deleteCourse,
+    handleApiError,
+} from "../api/course/courseAPI";
 
+import CourseTable from "../components/CourseTable";
+import CourseCreateDialog from "../components/CourseCreate";
+import CourseEditDialog from "../components/CourseEdit";
 
 const EditorCoursePage = () => {
     const [courses, setCourses] = useState([]);
-    const [openDialog, setOpenDialog] = useState(false);
-
+    const [openCreateDialog, setOpenCreateDialog] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [editCourseId, setEditCourseId] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/courses")
-            .then((res) => res.json())
-            .then((data) => setCourses(data))
-            .catch((err) => console.error("Error fetching courses:", err));
-    }, []);
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            setError("You must be logged in to view this page");
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
 
+        fetchCourses();
+    }, [navigate]);
 
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
+    const fetchCourses = async () => {
+        setLoading(true);
+        setError("");
+        try {
+            const data = await getAllCourses();
+            setCourses(data);
+        } catch (error) {
+            const errorMessage = handleApiError(error);
+            setError(errorMessage);
+
+            if (
+                errorMessage.includes("session expired") ||
+                errorMessage.includes("log in again")
+            ) {
+                navigate("/login", { state: { from: location.pathname } });
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
+    const handleOpenCreateDialog = () => {
+        setOpenCreateDialog(true);
+    };
+
+    const handleCloseCreateDialog = (shouldRefresh = false) => {
+        setOpenCreateDialog(false);
+        if (shouldRefresh) {
+            fetchCourses();
+            setSuccess("Course created successfully");
+        }
+    };
+
+    const handleEdit = (courseId) => {
+        setEditCourseId(courseId);
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = (shouldRefresh = false) => {
+        setOpenEditDialog(false);
+        if (shouldRefresh) {
+            fetchCourses();
+            setSuccess("Course updated successfully");
+        }
     };
 
     const handleNavigate = (courseID) => {
@@ -52,91 +93,104 @@ const EditorCoursePage = () => {
     };
 
     const handleDelete = async (courseID) => {
-        const isConfirmed = window.confirm("Are you sure you want to delete this course?");
-        
+        const isConfirmed = window.confirm(
+            "Are you sure you want to delete this course? This action cannot be undone."
+        );
+
         if (!isConfirmed) {
             return;
         }
-    
+
+        setSuccess("");
+        setError("");
+
         try {
-            const response = await fetch(`http://localhost:5000/api/courses/${courseID}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-    
-            if (response.ok) {
-              
-                setCourses((prevCourses) => prevCourses.filter(course => course._id !== courseID));
-                alert("Course successfully deleted.");
-            } else {
-                alert("Failed to delete course.");
-            }
+            await deleteCourse(courseID);
+            setCourses((prevCourses) =>
+                prevCourses.filter((course) => course._id !== courseID)
+            );
+            setSuccess("Course successfully deleted.");
         } catch (error) {
-            console.error("Error deleting course:", error);
+            const errorMessage = handleApiError(error);
+            setError(errorMessage);
+
+            if (
+                errorMessage.includes("session expired") ||
+                errorMessage.includes("log in again")
+            ) {
+                navigate("/login", { state: { from: location.pathname } });
+            }
         }
     };
-    
+
+    useEffect(() => {
+        let timer;
+        if (success || error) {
+            timer = setTimeout(() => {
+                setSuccess("");
+                setError("");
+            }, 5000);
+        }
+        return () => clearTimeout(timer);
+    }, [success, error]);
 
     return (
         <Container sx={{ mt: 5 }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Course List
-            </Typography>
-
-            <Grid item xl={6} md={6} sm={12} xs={12}>
-                <Button variant="contained" onClick={handleOpenDialog}>
-                    Create Course
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 3,
+                }}
+            >
+                <Typography variant="h4">Course Management</Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenCreateDialog}
+                >
+                    Add Course
                 </Button>
-            </Grid>
-            <CourseCreation 
-                    open={openDialog} 
-                    onClose={handleCloseDialog} 
-                />
-            <Grid container spacing={6} justifyContent="center">
-                {courses.map((course) => (
-                    <Grid item key={course._id} xs={12} sm={6} md={4} lg={3}>
-                        <Card
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-between",
-                                height: "100%",
-                                minHeight: 250,
-                                p: 2,
-                                boxShadow: 3,
-                            }}
-                        >
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography variant="h6">{course.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {course.description}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mt: 1 }}>
-                                    <strong>Difficulty:</strong> {course.difficulty}
-                                </Typography>
-                                <Typography variant="body2">
-                                    <strong>Created at:</strong> {new Date(course.createdAt).toLocaleDateString()}
-                                </Typography>
-                            </CardContent>
-                            <Button
-                                variant="contained"
-                             
-                                onClick={() => handleNavigate(course._id)}
-                            >
-                                View Course
-                            </Button>
+            </Box>
 
-                            <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => handleDelete(course._id)}
-                                >
-                                    Delete
-                            </Button>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
+            {error && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
+            )}
+            {success && (
+                <Typography color="success.main" sx={{ mb: 2 }}>
+                    {success}
+                </Typography>
+            )}
+
+            <CourseCreateDialog
+                open={openCreateDialog}
+                onClose={handleCloseCreateDialog}
+            />
+
+            <CourseEditDialog
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
+                courseId={editCourseId}
+            />
+
+            {loading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                    <CircularProgress />
+                    <Typography sx={{ ml: 2 }}>Loading courses...</Typography>
+                </Box>
+            ) : (
+                <TableContainer component={Paper} sx={{ boxShadow: 1 }}>
+                    <CourseTable
+                        courses={courses}
+                        onNavigate={handleNavigate}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
+                </TableContainer>
+            )}
         </Container>
     );
 };

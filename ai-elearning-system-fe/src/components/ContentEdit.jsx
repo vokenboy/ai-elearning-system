@@ -18,15 +18,15 @@ import {
     Autocomplete,
 } from "@mui/material";
 import ReactMarkdown from "react-markdown";
-import { addContent } from "../api/content/contentAPI";
+import { updateTopicById } from "../api/content/contentAPI";
 
 const LANGUAGES = ["javascript", "python"];
 
-const ContentCreation = ({ open, onClose, onSave, courseId }) => {
+const ContentEditDialog = ({ open, onClose, topic }) => {
     const [formData, setFormData] = useState({
         topic: "",
         description: "",
-        language: LANGUAGES[0],
+        language: "",
         tags: [],
     });
     const [loading, setLoading] = useState(false);
@@ -34,17 +34,15 @@ const ContentCreation = ({ open, onClose, onSave, courseId }) => {
     const [success, setSuccess] = useState("");
 
     useEffect(() => {
-        if (open) {
+        if (open && topic) {
             setFormData({
-                topic: "",
-                description: "",
-                language: LANGUAGES[0],
-                tags: [],
+                topic: topic.topic || "",
+                description: topic.description || "",
+                language: topic.language || "",
+                tags: topic.tags || [],
             });
-            setError("");
-            setSuccess("");
         }
-    }, [open]);
+    }, [open, topic]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -62,16 +60,16 @@ const ContentCreation = ({ open, onClose, onSave, courseId }) => {
         setSuccess("");
 
         try {
-            await addContent({ ...formData, courseId });
-            setSuccess("Topic created successfully!");
+            await updateTopicById(topic._id, formData);
+            setSuccess("Topic updated successfully!");
+
             setTimeout(() => {
-                if (onSave) onSave();
                 onClose(true);
             }, 1000);
-        } catch (err) {
-            console.error("Error creating topic:", err);
+        } catch (error) {
+            console.error("Error updating topic:", error);
             setError(
-                err.message || "Failed to create topic. Please try again."
+                error.message || "Failed to update topic. Please try again."
             );
             setLoading(false);
         }
@@ -94,7 +92,7 @@ const ContentCreation = ({ open, onClose, onSave, courseId }) => {
             PaperProps={{ sx: { borderRadius: 2 } }}
         >
             <DialogTitle>
-                <Typography variant="h6">Add Topic</Typography>
+                <Typography variant="h6">Edit Topic</Typography>
             </DialogTitle>
 
             <DialogContent dividers>
@@ -240,11 +238,11 @@ const ContentCreation = ({ open, onClose, onSave, courseId }) => {
                     disabled={loading || !isFormValid()}
                     startIcon={loading && <CircularProgress size={20} />}
                 >
-                    {loading ? "Saving..." : "Save Topic"}
+                    {loading ? "Saving..." : "Save Changes"}
                 </Button>
             </DialogActions>
         </Dialog>
     );
 };
 
-export default ContentCreation;
+export default ContentEditDialog;
