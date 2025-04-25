@@ -3,12 +3,15 @@ import { useState } from "react";
 import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
 import CodeEditor from "../components/CodeEditor";
 import AIFeedback from "../components/AiFeedback";
+import CodeOutput from "../components/CodeOutput";
 
 const TaskInterface = () => {
     const location = useLocation();
     const { taskData, topic } = location.state || {};
 
     const [code, setCode] = useState("");
+    const [compileTrigger, setCompileTrigger] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [feedback, setFeedback] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,6 +25,9 @@ const TaskInterface = () => {
         );
     }
 
+    const handleCompileCode = () => {
+        setCompileTrigger(prev => prev + 1);
+    }
     // const handleSubmitCode = () => {
     //     setIsSubmitting(true);
     //     setTimeout(() => {
@@ -36,7 +42,7 @@ const TaskInterface = () => {
         <Paper
             elevation={3}
             sx={{
-                height: "100vh",
+                height: "100%",
                 overflow: "hidden",
                 display: "flex",
                 flexDirection: "column",
@@ -85,12 +91,13 @@ const TaskInterface = () => {
                             <Button
                                 variant="outlined"
                                 color="secondary"
-                                onClick={() =>
-                                    console.log("Test solution logic here")
-                                }
+                                onClick={(handleCompileCode)}
+                                disabled={isLoading}
                                 size="medium"
                             >
-                                Test Solution
+                                {isLoading
+                                    ? "Compiling..."
+                                    : "Test Solution"}
                             </Button>
                             <Button
                                 variant="contained"
@@ -112,7 +119,16 @@ const TaskInterface = () => {
                             minHeight: 0,
                         }}
                     >
-                        <CodeEditor code={code} setCode={setCode} />
+                        <Box sx={{ height: "60vh", overflow: "hidden" }}>
+                            <CodeEditor code={code} setCode={setCode} />
+                        </Box>
+                        <Box sx={{  overflow: "hidden" }}>
+                            <CodeOutput
+                                compileTrigger={compileTrigger}
+                                code={code}
+                                setIsLoading={setIsLoading}
+                            />
+                        </Box>
                     </Box>
                     {feedback && (
                         <Box
