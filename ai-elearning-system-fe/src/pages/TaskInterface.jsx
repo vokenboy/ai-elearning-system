@@ -4,6 +4,8 @@ import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
 import CodeEditor from "../components/CodeEditor";
 import AIFeedback from "../components/AiFeedback";
 import CodeOutput from "../components/CodeOutput";
+import { evaluateTask } from "../api/task/taskAPI";
+
 
 const TaskInterface = () => {
     const location = useLocation();
@@ -14,6 +16,8 @@ const TaskInterface = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [feedback, setFeedback] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [evaluation, setEvaluation] = useState(null);
+
 
     if (!taskData) {
         return (
@@ -28,6 +32,28 @@ const TaskInterface = () => {
     const handleCompileCode = () => {
         setCompileTrigger(prev => prev + 1);
     }
+
+    const handleSubmitCode = async () => {
+        setIsSubmitting(true);
+        setEvaluation(null); 
+        const payload = {
+            task: taskData.task,
+            solution: taskData.solution,
+            user_solution: code
+        };
+        try {
+            const result = await evaluateTask(payload);
+            //console.log("Atsakymas:", result);
+            setFeedback(result.feedback || "No feedback received.");
+            setEvaluation(result.evaluation ?? null); 
+        } catch (error) {
+            //console.error("Klaida įvertinant kodą:", error);
+            setFeedback("Something went wrong while evaluating your solution.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     // const handleSubmitCode = () => {
     //     setIsSubmitting(true);
     //     setTimeout(() => {
@@ -101,7 +127,7 @@ const TaskInterface = () => {
                             </Button>
                             <Button
                                 variant="contained"
-                                // onClick={handleSubmitCode}
+                                onClick={handleSubmitCode}
                                 disabled={isSubmitting}
                                 size="medium"
                             >
@@ -119,17 +145,7 @@ const TaskInterface = () => {
                             minHeight: 0,
                         }}
                     >
-                        <Box sx={{ height: "60vh", overflow: "hidden" }}>
-                            <CodeEditor code={code} setCode={setCode} />
-                        </Box>
-                        <Box sx={{  overflow: "hidden" }}>
-                            <CodeOutput
-                                compileTrigger={compileTrigger}
-                                code={code}
-                                setIsLoading={setIsLoading}
-                            />
-                        </Box>
-                    </Box>
+                   
                     {feedback && (
                         <Box
                             sx={{
@@ -148,8 +164,27 @@ const TaskInterface = () => {
                             <Paper elevation={1} sx={{ p: 2 }}>
                                 <AIFeedback feedback={feedback} />
                             </Paper>
+
+                            {evaluation !== null && (
+                                 <Paper elevation={2} sx={{ p: 2 }}>
+                                    <Typography variant="body1">
+                                        <strong>Score:</strong> {evaluation} / 100
+                                    </Typography>
+                                </Paper>
+                            )}
                         </Box>
                     )}
+                    <Box sx={{ height: "60vh", overflow: "hidden" }}>
+                            <CodeEditor code={code} setCode={setCode} />
+                        </Box>
+                        <Box sx={{  overflow: "hidden" }}>
+                            <CodeOutput
+                                compileTrigger={compileTrigger}
+                                code={code}
+                                setIsLoading={setIsLoading}
+                            />
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
         </Paper>
