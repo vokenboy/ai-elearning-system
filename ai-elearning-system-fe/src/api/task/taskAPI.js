@@ -1,3 +1,9 @@
+import axios from "axios";
+
+const codeAPI = axios.create({
+    baseURL: "https://emkc.org/api/v2/piston"
+})
+
 export const generateTask = async (taskData) => {
     try {
         const response = await fetch("http://localhost:8000/generate_task/", {
@@ -19,3 +25,16 @@ export const generateTask = async (taskData) => {
         throw error;
     }
 };
+
+export const executeCode = async(language, version, sourceCode) => {
+    const response = await codeAPI.post("/execute", {
+        "language": language,
+        "version": version,
+        "files": [
+            {
+                "content": sourceCode,
+            },
+        ],
+    });
+    return response.data;
+} 

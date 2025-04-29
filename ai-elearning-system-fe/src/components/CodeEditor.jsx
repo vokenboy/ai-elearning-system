@@ -8,6 +8,7 @@ const MOCKUPcodeeditor = ({ code, setCode }) => {
                 height="100%"
                 defaultLanguage="javascript"
                 value={code}
+                theme="vs-dark"
                 onChange={(value) => setCode(value || "")}
                 options={{
                     minimap: { enabled: false },
