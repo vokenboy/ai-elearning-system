@@ -3,8 +3,6 @@ import { useState } from "react";
 import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
 import CodeEditor from "../components/CodeEditor";
 import AIFeedback from "../components/AiFeedback";
-import { evaluateTask } from "../api/task/taskAPI";
-
 
 const TaskInterface = () => {
     const location = useLocation();
@@ -13,8 +11,6 @@ const TaskInterface = () => {
     const [code, setCode] = useState("");
     const [feedback, setFeedback] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [evaluation, setEvaluation] = useState(null);
-
 
     if (!taskData) {
         return (
@@ -25,28 +21,6 @@ const TaskInterface = () => {
             </Box>
         );
     }
-    
-    const handleSubmitCode = async () => {
-        setIsSubmitting(true);
-        setEvaluation(null); 
-        const payload = {
-            task: taskData.task,
-            solution: taskData.solution,
-            user_solution: code
-        };
-        try {
-            const result = await evaluateTask(payload);
-            //console.log("Atsakymas:", result);
-            setFeedback(result.feedback || "No feedback received.");
-            setEvaluation(result.evaluation ?? null); 
-        } catch (error) {
-            //console.error("Klaida įvertinant kodą:", error);
-            setFeedback("Something went wrong while evaluating your solution.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-    
 
     // const handleSubmitCode = () => {
     //     setIsSubmitting(true);
@@ -63,7 +37,7 @@ const TaskInterface = () => {
             elevation={3}
             sx={{
                 height: "100vh",
-                overflow: "auto",
+                overflow: "hidden",
                 display: "flex",
                 flexDirection: "column",
             }}
@@ -120,7 +94,7 @@ const TaskInterface = () => {
                             </Button>
                             <Button
                                 variant="contained"
-                                onClick={handleSubmitCode}
+                                // onClick={handleSubmitCode}
                                 disabled={isSubmitting}
                                 size="medium"
                             >
@@ -138,7 +112,7 @@ const TaskInterface = () => {
                             minHeight: 0,
                         }}
                     >
-                    
+                        <CodeEditor code={code} setCode={setCode} />
                     </Box>
                     {feedback && (
                         <Box
@@ -158,17 +132,8 @@ const TaskInterface = () => {
                             <Paper elevation={1} sx={{ p: 2 }}>
                                 <AIFeedback feedback={feedback} />
                             </Paper>
-
-                            {evaluation !== null && (
-                                 <Paper elevation={2} sx={{ p: 2 }}>
-                                    <Typography variant="body1">
-                                        <strong>Score:</strong> {evaluation} / 100
-                                    </Typography>
-                                </Paper>
-                            )}
                         </Box>
                     )}
-                    <CodeEditor code={code} setCode={setCode} />
                 </Box>
             </Box>
         </Paper>
