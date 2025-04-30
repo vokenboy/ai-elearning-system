@@ -19,6 +19,18 @@ function App() {
         <AuthProvider>
             <Router>
                 <div className="app-container">
+                    <div
+                        className="content-container"
+                        style={{ paddingTop: "70px" }}
+                    >
+                        <Routes>
+                            <Route
+                                path="/courses/:courseId/exam"
+                                element={<Exam />}
+                            />
+                        </Routes>
+                    </div>
+
                     <Header />
                     <div
                         className="content-container"
@@ -33,10 +45,7 @@ function App() {
                                 path="/courses/:courseId/content"
                                 element={<CourseContent />}
                             />
-                            <Route
-                                path="/courses/:courseId/exam"
-                                element={<Exam />}
-                            />
+
                             <Route
                                 path="/courses/:courseId/task/:topicId"
                                 element={<TaskInterface />}
