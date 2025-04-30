@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/Header";
 import Register from "./pages/Register";
@@ -10,6 +10,7 @@ import TaskInterface from "./pages/TaskInterface";
 import PrivateRoute from "./components/PrivateRoute";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
+import Exam from "./pages/Exam";
 
 function App() {
     console.log("App component rendering");
@@ -33,12 +34,28 @@ function App() {
                                 element={<CourseContent />}
                             />
                             <Route
+                                path="/courses/:courseId/exam"
+                                element={<Exam />}
+                            />
+                            <Route
                                 path="/courses/:courseId/task/:topicId"
                                 element={<TaskInterface />}
                             />
-                            <Route element={<PrivateRoute allowedRoles={['Admin', 'Editor']} />}>
-                                <Route path="/editor/courses" element={<EditorCoursePage />} />
-                                <Route path="/editor/courses/:courseId/content" element={<EditorContentPage />} />
+                            <Route
+                                element={
+                                    <PrivateRoute
+                                        allowedRoles={["Admin", "Editor"]}
+                                    />
+                                }
+                            >
+                                <Route
+                                    path="/editor/courses"
+                                    element={<EditorCoursePage />}
+                                />
+                                <Route
+                                    path="/editor/courses/:courseId/content"
+                                    element={<EditorContentPage />}
+                                />
                             </Route>
                         </Routes>
                     </div>
