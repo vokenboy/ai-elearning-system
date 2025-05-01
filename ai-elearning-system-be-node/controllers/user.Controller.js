@@ -75,3 +75,56 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
+exports.fetchUserCourses = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        if (!userId) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const existingUser = await User.findOne({ "_id": userId });
+        if (existingUser) {
+            courses = existingUser.courses
+            if(!courses){
+                return res.status(404).json({ error: "Courses not found" });
+            }
+            res.json(courses)
+        }
+    } catch (error) {
+        console.error("Error fetching user courses:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
+exports.enrollUserToCourse = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { courseId } = req.body;
+        if (!userId || !courseId) {
+            return res
+                .status(400)
+                .json({ error: "Provide userId and courseId" });
+        }
+
+        const existingUser = await User.findOne({ "_id": userId });
+        if (existingUser) {
+            courses = existingUser.courses
+            if(!courses.includes(courseId)){
+                courses.push(courseId);
+            }
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                {courses},
+                {new: true}
+            );
+        }
+        else {
+            return res.status(404).json({error: "User not found. Please login."});
+        }
+        res.status(200).json({message: "User enrolled successfully"});
+    } catch (error) {
+        console.error("Error enrolling user:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
