@@ -1,90 +1,52 @@
-import { useState } from "react";
-import { Box, AppBar, Toolbar, Typography, CssBaseline } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+    Box,
+    AppBar,
+    Toolbar,
+    Typography,
+    CssBaseline,
+    CircularProgress,
+} from "@mui/material";
+import { useParams } from "react-router-dom";
 import ExamSidebar from "../components/ExamSidebar";
 import QuestionContent from "../components/QuestionContent";
-
-const exam = {
-    topic: "JavaScript Introduction",
-    questions: [
-        { id: 1, text: "What is JavaScript?", score: 5, type: "open" },
-        {
-            id: 2,
-            text: "Which of the following are primitive data types in JavaScript?",
-            score: 5,
-            type: "multiSelect",
-            options: ["String", "Number", "Boolean", "Object", "Undefined"],
-        },
-        {
-            id: 3,
-            text: "What does ‘===’ operator compare?",
-            score: 5,
-            type: "singleSelect",
-            options: [
-                "Value only",
-                "Type only",
-                "Value and type",
-                "Memory reference",
-            ],
-        },
-        {
-            id: 4,
-            text: "Explain the difference between var, let, and const.",
-            score: 10,
-            type: "open",
-        },
-        {
-            id: 5,
-            text: "Which array methods modify the original array?",
-            score: 5,
-            type: "multiSelect",
-            options: ["map", "filter", "push", "pop", "slice"],
-        },
-        {
-            id: 6,
-            text: "What is the scope of a variable declared with let inside a block?",
-            score: 5,
-            type: "singleSelect",
-            options: [
-                "Function scope",
-                "Global scope",
-                "Block scope",
-                "Module scope",
-            ],
-        },
-        {
-            id: 7,
-            text: "Describe what a callback function is.",
-            score: 5,
-            type: "open",
-        },
-        {
-            id: 8,
-            text: "Which of these are falsy values in JavaScript?",
-            score: 5,
-            type: "multiSelect",
-            options: ["0", "NaN", "'false'", "undefined", "null"],
-        },
-        {
-            id: 9,
-            text: "What will console.log(typeof NaN) output?",
-            score: 5,
-            type: "singleSelect",
-            options: ["number", "NaN", "undefined", "object"],
-        },
-        {
-            id: 10,
-            text: "How do you convert a string '123' to a number in JavaScript?",
-            score: 5,
-            type: "open",
-        },
-    ],
-};
+import { getExamByCourseId } from "../api/exam/examAPI";
 
 const Exam = () => {
-    const [selectedId, setSelectedId] = useState(exam.questions[0]?.id || null);
+    const { courseId } = useParams();
+
+    const [exam, setExam] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedId, setSelectedId] = useState(null);
     const [answers, setAnswers] = useState({});
 
-    const selectedQuestion = exam.questions.find((q) => q.id === selectedId);
+    useEffect(() => {
+        const fetchExam = async () => {
+            setLoading(true);
+            try {
+                const raw = await getExamByCourseId(courseId);
+                const data = Array.isArray(raw) ? raw[0] : raw;
+                if (!data?.questions || !Array.isArray(data.questions)) {
+                    throw new Error("Invalid exam data");
+                }
+                setExam(data);
+                setSelectedId(data.questions[0]?.id ?? null);
+            } catch (err) {
+                console.error(`Error loading exam ${courseId}:`, err);
+                setError("Failed to load exam.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (courseId) {
+            fetchExam();
+        } else {
+            setError("No course ID provided.");
+            setLoading(false);
+        }
+    }, [courseId]);
 
     const handleChange = (id, value) => {
         setAnswers((prev) => ({ ...prev, [id]: value }));
@@ -92,8 +54,41 @@ const Exam = () => {
 
     const handleSubmit = () => {
         console.log("Submitted answers:", answers);
-        // TODO API Call
+        // TODO siusti atsakymus i srv
     };
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
+                <Typography color="error">{error}</Typography>
+            </Box>
+        );
+    }
+
+    const selectedQuestion =
+        exam.questions.find((q) => q.id === selectedId) ?? null;
 
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
@@ -103,7 +98,7 @@ const Exam = () => {
                 sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
             >
                 <Toolbar>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap>
                         {exam.topic}
                     </Typography>
                 </Toolbar>
