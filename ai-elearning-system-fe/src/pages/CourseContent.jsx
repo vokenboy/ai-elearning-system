@@ -132,6 +132,14 @@ const CourseContent = () => {
                     </Typography>
                 )}
             </Paper>
+            <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => navigate(`/courses/${params.courseId}/exam`)}
+                sx={{ mt: 4 }}
+            >
+                Exam
+            </Button>
         </Container>
     );
 };

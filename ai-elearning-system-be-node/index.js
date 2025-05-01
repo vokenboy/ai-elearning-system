@@ -6,6 +6,7 @@ const connectToDatabase = require("./db");
 const userRoutes = require("./routes/user.Route");
 const courseRoutes = require("./routes/course.routes");
 const contentRoutes = require("./routes/content.Route");
+const examRoutes = require("./routes/exam.Route");
 
 const app = express();
 const PORT = 5000;
@@ -22,6 +23,7 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/contents", contentRoutes);
+app.use("/api/exams", examRoutes);
 
 const startServer = async () => {
     await connectToDatabase();
