@@ -17,12 +17,17 @@ import {
     DialogTitle,
     DialogActions,
     DialogContent,
+    Hidden,
 } from "@mui/material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { enrollUserToCourse, fetchUserCoursesList } from "../api/auth/authAPI";
 
 const CourseView = () => {
     const [courses, setCourses] = useState([]);
+    const [userCourses, setUserCourses] = useState([]);
+    const [fetchedCourses, setfetchedCourses] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -33,13 +38,41 @@ const CourseView = () => {
             .then((res) => res.json())
             .then((data) => setCourses(data))
             .catch((err) => console.error("Error fetching courses:", err));
-    }, []);
+            fetchUserCourses()
+    }, [isLoading]);
 
 
     const handleNavigate = (courseID) => {
         navigate(`/courses/${courseID}/content`);
     };
 
+    const handleEnroll = async (courseId) => {
+        setIsLoading(true);
+        setError("");
+        try {
+            await enrollUserToCourse(courseId);
+            setSuccess("User enrolled successfully");
+            console.log("User enrolled successfully");
+            setIsLoading(false);
+        } catch (err) {
+            console.error(`Error enrolling user to course ${courseId}:`, err);
+            setError("Failed to enroll user to course. Please try again.");
+            setIsLoading(false);
+        }
+    };
+    const fetchUserCourses = async () => {
+        setError("");
+        try {
+            const userCourseList = await fetchUserCoursesList();
+            if(userCourseList != null){
+                setUserCourses(userCourseList);
+                setfetchedCourses(true);
+            }
+        } catch (err) {
+            console.error(`Error fetching user courses:`, err);
+            setfetchedCourses(false);
+        }
+    };
     return (
         <Container sx={{ mt: 5 }}>
             <Typography variant="h4" align="center" gutterBottom>
@@ -80,6 +113,15 @@ const CourseView = () => {
                                     ).toLocaleDateString()}
                                 </Typography>
                             </CardContent>
+                            {fetchedCourses &&
+                                <Button
+                                    sx={{mb:2}}
+                                    variant="contained"
+                                    onClick={() => handleEnroll(course._id)}
+                                    disabled={userCourses.includes(course._id)}
+                                >
+                                    {userCourses.includes(course._id) ? "Enrolled" : "Enroll to course"}
+                                </Button>}
                             <Button
                                 variant="contained"
                                 onClick={() => handleNavigate(course._id)}

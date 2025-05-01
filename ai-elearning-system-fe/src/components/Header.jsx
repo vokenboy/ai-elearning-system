@@ -18,7 +18,7 @@ const Header = () => {
     };
 
     return (
-        <AppBar position="fixed">
+        <AppBar position="fixed" style={{ backgroundColor:"black"}}>
             <Toolbar>
             <img
     src={icon}
@@ -26,10 +26,11 @@ const Header = () => {
     style={{
         height: "40px", // Adjust size as needed
         cursor: "pointer",
+        
     }}
     onClick={() => navigate("/")} // Clicking the logo navigates home
 />
-<div style={{ flexGrow: 1 }} />
+<div style={{ flexGrow: 1, }} />
                 {/*Role-based component*/}
                 <HeaderButton allowedRoles={['Editor', 'Admin']}></HeaderButton>
                  <Button color="inherit" component={Link} to="/courses">
