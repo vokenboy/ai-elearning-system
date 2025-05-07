@@ -18,7 +18,7 @@ import {
     Autocomplete,
 } from "@mui/material";
 import ReactMarkdown from "react-markdown";
-import { addContent } from "../api/content/contentAPI";
+import { addContent } from "../../api/content/contentAPI";
 
 const LANGUAGES = ["javascript", "python"];
 

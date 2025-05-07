@@ -13,7 +13,7 @@ import {
     DialogContent,
     CircularProgress,
 } from "@mui/material";
-import { saveCourse } from "../api/course/courseAPI";
+import { saveCourse } from "../../api/course/courseAPI";
 
 const CourseCreate = ({ open, onClose }) => {
     const [title, setTitle] = useState("");

@@ -4,7 +4,7 @@ import { loginUser } from "../api/auth/authAPI";
 import { useAuth } from "../context/authContext";
 import { FcGoogle } from "react-icons/fc";
 
-const Login = () => {
+const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -35,7 +35,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <div className="card w-full max-w-md bg-base-100 shadow-xl">
                 <div className="card-body">
                     <h2 className="card-title text-2xl font-bold mb-6">
@@ -111,4 +111,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;

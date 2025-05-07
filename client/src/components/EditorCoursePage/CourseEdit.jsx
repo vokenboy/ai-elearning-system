@@ -13,7 +13,7 @@ import {
     DialogContent,
     CircularProgress,
 } from "@mui/material";
-import { getCourseById, updateCourse } from "../api/course/courseAPI";
+import { getCourseById, updateCourse } from "../../api/course/courseAPI";
 
 const CourseEdit = ({ open, onClose, courseId }) => {
     const [title, setTitle] = useState("");

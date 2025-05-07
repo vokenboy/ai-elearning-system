@@ -1,10 +1,9 @@
-// src/pages/Register.jsx
 import React, { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/auth/authAPI";
 import { FcGoogle } from "react-icons/fc";
 
-export default function Register() {
+const RegisterPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -15,7 +14,6 @@ export default function Register() {
         setError("");
 
         try {
-            // Derive a username from email
             const name = email.split("@")[0] || "User";
             await registerUser({ name, email, password });
             navigate("/login");
@@ -26,7 +24,7 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <div className="card w-full max-w-md bg-base-100 shadow-xl">
                 <div className="card-body">
                     <h2 className="card-title text-2xl font-bold mb-6">
@@ -100,4 +98,6 @@ export default function Register() {
             </div>
         </div>
     );
-}
+};
+
+export default RegisterPage;

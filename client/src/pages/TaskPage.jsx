@@ -1,13 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
-import CodeEditor from "../components/CodeEditor";
-import AIFeedback from "../components/AiFeedback";
-import CodeOutput from "../components/CodeOutput";
+import CodeEditor from "../components/TaskPage/CodeEditor";
+import AIFeedback from "../components/TaskPage/AiFeedback";
+import CodeOutput from "../components/TaskPage/CodeOutput";
 import { evaluateTask } from "../api/task/taskAPI";
 
-
-const TaskInterface = () => {
+const TaskPage = () => {
     const location = useLocation();
     const { taskData, topic } = location.state || {};
 
@@ -17,7 +16,6 @@ const TaskInterface = () => {
     const [feedback, setFeedback] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [evaluation, setEvaluation] = useState(null);
-
 
     if (!taskData) {
         return (
@@ -30,24 +28,22 @@ const TaskInterface = () => {
     }
 
     const handleCompileCode = () => {
-        setCompileTrigger(prev => prev + 1);
-    }
+        setCompileTrigger((prev) => prev + 1);
+    };
 
     const handleSubmitCode = async () => {
         setIsSubmitting(true);
-        setEvaluation(null); 
+        setEvaluation(null);
         const payload = {
             task: taskData.task,
             solution: taskData.solution,
-            user_solution: code
+            user_solution: code,
         };
         try {
             const result = await evaluateTask(payload);
-            //console.log("Atsakymas:", result);
             setFeedback(result.feedback || "No feedback received.");
-            setEvaluation(result.evaluation ?? null); 
+            setEvaluation(result.evaluation ?? null);
         } catch (error) {
-            //console.error("Klaida įvertinant kodą:", error);
             setFeedback("Something went wrong while evaluating your solution.");
         } finally {
             setIsSubmitting(false);
@@ -117,13 +113,11 @@ const TaskInterface = () => {
                             <Button
                                 variant="outlined"
                                 color="secondary"
-                                onClick={(handleCompileCode)}
+                                onClick={handleCompileCode}
                                 disabled={isLoading}
                                 size="medium"
                             >
-                                {isLoading
-                                    ? "Compiling..."
-                                    : "Test Solution"}
+                                {isLoading ? "Compiling..." : "Test Solution"}
                             </Button>
                             <Button
                                 variant="contained"
@@ -145,39 +139,39 @@ const TaskInterface = () => {
                             minHeight: 0,
                         }}
                     >
-                   
-                    {feedback && (
-                        <Box
-                            sx={{
-                                p: 2,
-                                borderTop: "1px solid",
-                                borderColor: "divider",
-                            }}
-                        >
-                            <Typography
-                                variant="subtitle1"
-                                fontWeight="bold"
-                                gutterBottom
+                        {feedback && (
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderTop: "1px solid",
+                                    borderColor: "divider",
+                                }}
                             >
-                                Feedback
-                            </Typography>
-                            <Paper elevation={1} sx={{ p: 2 }}>
-                                <AIFeedback feedback={feedback} />
-                            </Paper>
-
-                            {evaluation !== null && (
-                                 <Paper elevation={2} sx={{ p: 2 }}>
-                                    <Typography variant="body1">
-                                        <strong>Score:</strong> {evaluation} / 100
-                                    </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    fontWeight="bold"
+                                    gutterBottom
+                                >
+                                    Feedback
+                                </Typography>
+                                <Paper elevation={1} sx={{ p: 2 }}>
+                                    <AIFeedback feedback={feedback} />
                                 </Paper>
-                            )}
-                        </Box>
-                    )}
-                    <Box sx={{ height: "60vh", overflow: "hidden" }}>
+
+                                {evaluation !== null && (
+                                    <Paper elevation={2} sx={{ p: 2 }}>
+                                        <Typography variant="body1">
+                                            <strong>Score:</strong> {evaluation}{" "}
+                                            / 100
+                                        </Typography>
+                                    </Paper>
+                                )}
+                            </Box>
+                        )}
+                        <Box sx={{ height: "60vh", overflow: "hidden" }}>
                             <CodeEditor code={code} setCode={setCode} />
                         </Box>
-                        <Box sx={{  overflow: "hidden" }}>
+                        <Box sx={{ overflow: "hidden" }}>
                             <CodeOutput
                                 compileTrigger={compileTrigger}
                                 code={code}
@@ -191,4 +185,4 @@ const TaskInterface = () => {
     );
 };
 
-export default TaskInterface;
+export default TaskPage;

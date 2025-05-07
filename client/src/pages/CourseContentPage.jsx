@@ -1,13 +1,12 @@
-// pages/CourseContent.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { generateTask } from "../api/task/taskAPI";
 import ReactMarkdown from "react-markdown";
 import Markdown from "../components/Markdown";
-import TableOfContents from "../components/TableOfContents";
+import TableOfContents from "../components/CourseContentPage/TableOfContents";
 
-const CourseContent = () => {
+const CourseContentPage = () => {
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -114,4 +113,4 @@ const CourseContent = () => {
     );
 };
 
-export default CourseContent;
+export default CourseContentPage;

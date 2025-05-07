@@ -9,9 +9,9 @@ import {
     Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ContentCreation from "../components/ContentCreation";
-import ContentEdit from "../components/ContentEdit";
-import TopicCard from "../components/TopicCard";
+import ContentCreation from "../components/EditorContentPage/ContentCreation";
+import ContentEdit from "../components/EditorContentPage/ContentEdit";
+import TopicCard from "../components/EditorContentPage/TopicCard";
 import { useParams } from "react-router-dom";
 import {
     getContentByCourseId,

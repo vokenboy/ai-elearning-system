@@ -16,9 +16,9 @@ import {
     handleApiError,
 } from "../api/course/courseAPI";
 
-import CourseTable from "../components/CourseTable";
-import CourseCreateDialog from "../components/CourseCreate";
-import CourseEditDialog from "../components/CourseEdit";
+import CourseTable from "../components/EditorCoursePage/CourseTable";
+import CourseCreateDialog from "../components/EditorCoursePage/CourseCreate";
+import CourseEditDialog from "../components/EditorCoursePage/CourseEdit";
 
 const EditorCoursePage = () => {
     const [courses, setCourses] = useState([]);

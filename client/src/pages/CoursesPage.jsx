@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllCourses } from "../api/course/courseAPI";
 import { enrollUserToCourse, fetchUserCoursesList } from "../api/auth/authAPI";
-import CourseCard from "../components/CourseCard";
+import CourseCard from "../components/CoursesPage/CourseCard";
 
-const Courses = () => {
+const CoursesPage = () => {
     const [courses, setCourses] = useState([]);
     const [userCourses, setUserCourses] = useState([]);
     const [fetchedCourses, setFetchedCourses] = useState(false);
@@ -92,4 +92,4 @@ const Courses = () => {
     );
 };
 
-export default Courses;
+export default CoursesPage;

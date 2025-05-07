@@ -1,4 +1,9 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getExamByCourseId } from "../api/exam/examAPI";
+import ExamSidebar from "../components/ExamPage/ExamSidebar";
+import QuestionContent from "../components/ExamPage/QuestionContent";
+
 import {
     Box,
     AppBar,
@@ -7,12 +12,8 @@ import {
     CssBaseline,
     CircularProgress,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
-import ExamSidebar from "../components/ExamSidebar";
-import QuestionContent from "../components/QuestionContent";
-import { getExamByCourseId } from "../api/exam/examAPI";
 
-const Exam = () => {
+const ExamPage = () => {
     const { courseId } = useParams();
 
     const [exam, setExam] = useState(null);
@@ -138,4 +139,4 @@ const Exam = () => {
     );
 };
 
-export default Exam;
+export default ExamPage;

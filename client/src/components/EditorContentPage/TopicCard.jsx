@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import LanguageIcon from "@mui/icons-material/Language";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ReactMarkdown from "react-markdown";
-import MarkdownStyles from "./MarkdownStyles";
+import MarkdownStyles from "../MarkdownStyles";
 
 const TopicCard = ({ topic, onEdit, onDelete }) => {
     return (
