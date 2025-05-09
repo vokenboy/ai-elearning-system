@@ -4,10 +4,12 @@ import uvicorn
 
 from post_generate_task_endpoint import generate_task
 from post_evaluate_task_endpoint import evaluate_task
+from post_generate_exam_question_endpoint import generate_exam_question
 
 app = FastAPI()
 app.include_router(generate_task.router)
 app.include_router(evaluate_task.router)
+app.include_router(generate_exam_question.router)
 
 origins = [
     "*"
