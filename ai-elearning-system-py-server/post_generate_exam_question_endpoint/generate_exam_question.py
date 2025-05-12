@@ -19,7 +19,6 @@ def generate_exam_question(task_request: TaskRequest):
     
     prompt = """
         Topic: {task_request.topic}
-        Language: {task_request.language}
         Description: {task_request.description}
         Level: {task_request.level}
         Question_type: {task_request.level}
