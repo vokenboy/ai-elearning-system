@@ -62,7 +62,6 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
         const values = [...formData];
         values[index][e.target.name] = e.target.value;
         setFormData(values);
-        console.log(values)
     };
 
     const handleSubmit = async (e) => {
@@ -86,6 +85,7 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
                 }
             });
             setSuccess("Exam created successfully!");
+            setLoading(false)
             setTimeout(() => {
                 if (onSave) onSave();
                 onClose(true);
