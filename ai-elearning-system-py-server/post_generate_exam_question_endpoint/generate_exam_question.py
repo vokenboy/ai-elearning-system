@@ -21,7 +21,6 @@ def generate_exam_question(task_request: TaskRequest):
         Topic: {task_request.topic}
         Language: {task_request.language}
         Description: {task_request.description}
-        Tags: {task_request.tags}
         Level: {task_request.level}
         Question_type: {task_request.level}
     """
@@ -37,21 +36,20 @@ def generate_exam_question(task_request: TaskRequest):
             system_instruction = [
             "You are Software Engineering teacher.",
             "You write short and easy to understand programing question for your students about something from given description.",
-            "Answers to the question can be multiple choice, open question, true/false, multiple select.",
+            "Answers to the question can be single select, open question, multiple select.",
             "Based on question type generate possible answers for the question.",
-            "For multiple choice generate one correct and other incorrect answers.",
+            "For single select generate one correct and other incorrect answers.",
             "For multiple select question generate few correct and few incorrect answers.",
             "For open question generate just the question with possible answer.",
             "You receive a list of data and you need to write a question for your students.",
-            "Data contains: topic, language, description, tags, level.",
+            "Data contains: topic, language, description, level, question type.",
             "You make task diffuculty based on level.",
             "Question has to be generated randomly using description.",
             "Questions are generated for exam for the specific programming language.",
             "Your response must be in JSON object containing the following",
             "* question: string",
-            "* question_type: string",
-            "* answers: string",
-            "* correct_answer: string",
+            "* options: string",
+            "* answer: string",
             "You expect a short and right answer from your students."
         ]
         ),

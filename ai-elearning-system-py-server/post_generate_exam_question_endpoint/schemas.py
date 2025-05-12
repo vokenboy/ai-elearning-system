@@ -4,11 +4,10 @@ class TaskRequest(BaseModel):
     topic: str
     language: str
     description: str
-    tags: list[str]
     level: str
+    question_type: str
 
 class TaskResponse(BaseModel):
     question: str
-    question_type: str
-    answers: str
-    correct_answer: str
+    options: str
+    answer: str

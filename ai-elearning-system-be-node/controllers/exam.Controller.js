@@ -17,3 +17,24 @@ exports.getExamByCourseId = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
+exports.addExamSchema = async (req, res) => {
+    try {
+        const { examData } = req.body;
+        const exam = new Exam({
+            courseId: examData.courseId,
+            topic: examData.title,
+            questions_schema: examData.questions_schema,
+        });
+        console.log(exam)
+        await exam.save();
+
+        res.status(201).json({
+            message: "Exam schema added to the course",
+            exam,
+        });
+    } catch (error) {
+        console.error("Error adding exam schema:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+};

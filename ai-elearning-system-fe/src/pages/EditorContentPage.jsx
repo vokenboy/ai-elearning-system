@@ -18,10 +18,12 @@ import {
     deleteTopicById,
 } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
+import ExamCreateDialog from "../components/ExamCreate";
 
 const EditorContentPage = () => {
     const [openCreateDialog, setOpenCreateDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openExamCreateDialog, setOpenExamCreateDialog] = useState(false);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState(null);
@@ -78,7 +80,18 @@ const EditorContentPage = () => {
             clearMessages();
         }
     };
+    const handleOpenExamCreateDialog = () => {
+        setOpenExamCreateDialog(true);
+    };
 
+    const handleCloseExamCreateDialog = (refresh = false) => {
+        setOpenExamCreateDialog(false);
+        if (refresh) {
+            fetchCourseTopics();
+            setSuccess("Content topic successfully created!");
+            clearMessages();
+        }
+    };
     const handleOpenEditDialog = (topic) => {
         setSelectedTopic(topic);
         setOpenEditDialog(true);
@@ -141,21 +154,32 @@ const EditorContentPage = () => {
                         {courseDetails.description}
                     </Typography>
                 )}
-            </Box>
-            <Button
+            <Button 
+                sx={{ mt:2 }}
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={handleOpenCreateDialog}
             >
                 Add Topic
             </Button>
+            </Box>
+            <Box sx={{ mb: 2, justifyContent: 'flex-end' }}>
+                <Button
+                    variant="contained"
+                    color="inherit"
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenExamCreateDialog}
+                >
+                    Add Exam Schema
+                </Button>
+            </Box>
         </Box>
     );
 
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            
             <CourseHeader />
-
             {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>
                     {error}
@@ -191,6 +215,11 @@ const EditorContentPage = () => {
                 courseId={courseId}
             />
 
+            <ExamCreateDialog
+                open={openExamCreateDialog}
+                onClose={handleCloseExamCreateDialog}
+                courseId={courseId}
+            />
             {selectedTopic && (
                 <ContentEdit
                     open={openEditDialog}
