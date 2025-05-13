@@ -25,8 +25,6 @@ const Exam = () => {
     const [selectedId, setSelectedId] = useState(null);
     const [answers, setAnswers] = useState({});
 
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
     useEffect(() => {
         const fetchExam = async () => {
             setLoading(true);
