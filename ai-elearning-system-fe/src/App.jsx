@@ -11,6 +11,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
 import Exam from "./pages/Exam";
+import UserProfile from "./components/UserProfile";
+
 
 function App() {
     console.log("App component rendering");
@@ -41,6 +43,8 @@ function App() {
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/courses" element={<CourseView />} />
+                            <Route path="/api/users/me" element={<UserProfile />} />
+
                             <Route
                                 path="/courses/:courseId/content"
                                 element={<CourseContent />}
