@@ -1,12 +1,12 @@
 from pydantic import BaseModel
+from typing import List
 
+# TaskRequest model to accept the task input
 class TaskRequest(BaseModel):
-    topic: str
-    description: str
+    topics: List[dict]
     level: str
-    question_type: str
+    questions_schema: List[dict]
 
+# TaskResponse model to return a list of questions
 class TaskResponse(BaseModel):
-    question: str
-    options: str
-    answer: str
+    questions: List[dict]

@@ -39,7 +39,7 @@ const ExamSidebar = ({
             {questions.map((q) => {
                 const answer = answers[q.id];
                 const isAnswered =
-                    q.type === "multiSelect"
+                    q.type === "multiple select"
                         ? Array.isArray(answer) && answer.length > 0
                         : Boolean(answer && answer.toString().trim() !== "");
 
