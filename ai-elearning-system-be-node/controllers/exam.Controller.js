@@ -21,11 +21,10 @@ exports.getExamByCourseId = async (req, res) => {
 exports.addExamSchema = async (req, res) => {
     try {
         const { examData } = req.body;
-        var filter = {courseId : examData.courseId};
-        var courseExam = await Exam.findOneAndUpdate(
-            filter, 
-            { questions_schema: examData.questions_schema, }
-        );
+        var filter = { courseId: examData.courseId };
+        var courseExam = await Exam.findOneAndUpdate(filter, {
+            questions_schema: examData.questions_schema,
+        });
         if (!courseExam) {
             courseExam = new Exam({
                 courseId: examData.courseId,
@@ -34,7 +33,7 @@ exports.addExamSchema = async (req, res) => {
             });
             await courseExam.save();
         }
-        console.log(courseExam)
+        console.log(courseExam);
 
         res.status(201).json({
             message: "Exam schema added to the course",
@@ -42,6 +41,8 @@ exports.addExamSchema = async (req, res) => {
         });
     } catch (error) {
         console.error("Error adding exam schema:", error);
+    }
+};
 
 exports.createExam = async (req, res) => {
     try {
