@@ -34,7 +34,7 @@ const ExamContentSchema = new mongoose.Schema(
             required: false,
         },
         user_answers: {
-            type:[String],
+            type: {},
             required: false,
         }
     },

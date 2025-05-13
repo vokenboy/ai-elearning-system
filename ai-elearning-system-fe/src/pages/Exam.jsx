@@ -92,13 +92,13 @@ const Exam = () => {
             userId: null,
             topic: course.title,
             questions: exam.questions,
-            answers: userAnswers,
+            user_answers: userAnswers,
         }
 
         try {
             await addExamWithAnswers(examItem);
             console.log("Exam saved successfully");
-
+            await EvaluateExamAnswers();
         } catch (err) {
             setError(err.message || "Failed to save exam");
             console.error("Exam saving error:", err);
@@ -106,7 +106,7 @@ const Exam = () => {
         }
     };
 
-    const handleReview = async () => {
+    const EvaluateExamAnswers = async () => {
         try {
             const score = await evaluateExamAnswers({
                 questions: exam.questions, 
@@ -189,7 +189,7 @@ const Exam = () => {
                 userAnswers={userAnswers}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
-                onSubmit={handleSubmit && handleReview}
+                onSubmit={handleSubmit}
             />
 
             <Box

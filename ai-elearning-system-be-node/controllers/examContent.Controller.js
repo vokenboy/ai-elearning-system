@@ -2,15 +2,14 @@ const ExamContent = require("../models/examContent.Model");
 
 exports.addExamWithAnswers = async (req, res) => {
     try {
-            const { courseId, userId, topic, questions, answers } = req.body;
+            const { courseId, userId, topic, questions, user_answers } = req.body;
             const exam = new ExamContent({
                 courseId: courseId,
                 userId: userId,
                 topic: topic,
                 questions: questions,
-                answers: answers,
+                user_answers: user_answers,
             });
-            console.log(req.body);
             await exam.save();
     
             res.status(201).json({
