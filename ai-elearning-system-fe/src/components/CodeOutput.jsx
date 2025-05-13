@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography} from "@mui/material";
 import { executeCode } from "../api/task/taskAPI";
 
-const CodeOutput = ({ compileTrigger, code, setIsLoading }) => {
+const CodeOutput = ({ compileTrigger, code, language, setIsLoading }) => {
     const [output, setOutput] = useState("");
     const [isError, setIsError] = useState(false);
 
@@ -11,13 +11,11 @@ const CodeOutput = ({ compileTrigger, code, setIsLoading }) => {
     }, [compileTrigger]);
 
     const runCode = async () => {
-        const language = "javascript";
-        const version = "18.15.0";
 
         if (!code) return;
         try {
             setIsLoading(true);
-            const { run: result } = await executeCode(language, version, code);
+            const { run: result } = await executeCode(language, code);
             setOutput(result.output)
             result.stderr ? setIsError(true) : setIsError(false)
             console.log(output)

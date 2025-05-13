@@ -1,10 +1,12 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
 import CodeEditor from "../components/CodeEditor";
 import AIFeedback from "../components/AiFeedback";
 import CodeOutput from "../components/CodeOutput";
 import { evaluateTask } from "../api/task/taskAPI";
+import { useParams } from "react-router-dom";
+import { getLanguageByTopicId } from "../api/content/contentAPI";
 
 
 const TaskInterface = () => {
@@ -18,6 +20,8 @@ const TaskInterface = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [evaluation, setEvaluation] = useState(null);
 
+    const { topicId } = useParams();
+    const [language, setLanguage] = useState("");
 
     if (!taskData) {
         return (
@@ -29,6 +33,18 @@ const TaskInterface = () => {
         );
     }
 
+    useEffect(() => {
+        if (!topicId) return;
+        (async () => {
+        try {
+            const lang = await getLanguageByTopicId(topicId);
+            setLanguage(lang); 
+        } catch (err) {
+            setErrorMessage(err.message);
+        }
+        })();
+      }, [topicId]);
+      
     const handleCompileCode = () => {
         setCompileTrigger(prev => prev + 1);
     }
@@ -181,6 +197,7 @@ const TaskInterface = () => {
                             <CodeOutput
                                 compileTrigger={compileTrigger}
                                 code={code}
+                                language={language}
                                 setIsLoading={setIsLoading}
                             />
                         </Box>

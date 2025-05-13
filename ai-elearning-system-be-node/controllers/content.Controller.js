@@ -71,3 +71,12 @@ exports.updateContentById = async(req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.getContentByContentId = async (req, res) => {
+    try {
+        const contentData = await Content.findById(req.params.contentId);
+        res.json(contentData);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};

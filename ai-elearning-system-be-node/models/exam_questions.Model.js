@@ -1,17 +1,21 @@
-const mongoose = require("mongoose");
 
-const QuestionSchema = new mongoose.Schema({
-    id: { type: Number, required: true },
-    topic : { type: String, required: false},
-    score: { type: Number, required: true },
+const QuestionsSchema = new mongoose.Schema({
+    id: { type: Number, required: false },
+    text: { type: String, required: true },
+    score: { type: Number, required: false },
     type: {
         type: String,
         enum: ["open", "single select", "multiple select"],
         required: true,
     },
+    options: {
+        type: [String],
+        default: undefined,
+    },
+    answer: { type: String, required: false },
 });
 
-const ExamSchema = new mongoose.Schema(
+const ExamQuestionsSchema = new mongoose.Schema(
     {
         courseId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -24,13 +28,12 @@ const ExamSchema = new mongoose.Schema(
             required: false,
         },
         topic: { type: String, required: true },
-        questions_schema: {
-            type: [QuestionSchema],
-            required: true,
-            validate: (v) => Array.isArray(v) && v.length > 0,
+        questions: {
+            type: [QuestionsSchema],
+            required: false,
         },
     },
     { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
-module.exports = mongoose.model("Exam", ExamSchema);
+module.exports = mongoose.model("ExamQuestion", ExamQuestionsSchema);
