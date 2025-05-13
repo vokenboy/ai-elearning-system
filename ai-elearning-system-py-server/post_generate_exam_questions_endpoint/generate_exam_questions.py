@@ -11,11 +11,11 @@ from google.genai.types import GenerateContentConfig, HttpOptions
 load_dotenv()
 
 router = APIRouter(
-    prefix="/generate_exam_question",
+    prefix="/generate_exam_questions",
 )
 
 @router.post("/")
-def generate_exam_question(task_request: TaskRequest):
+def generate_exam_questions(task_request: TaskRequest):
     
     prompt = """
         Topics: {task_request.topics}

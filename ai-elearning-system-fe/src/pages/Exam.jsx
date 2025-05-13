@@ -14,6 +14,7 @@ import { getContentByCourseId } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
 import { getExamByCourseId } from "../api/exam/examAPI";
 import { generateExamQuestion, addExamWithAnswers } from "../api/exam/exam_contentAPI";
+import { evaluateExamAnswers } from "../api/exam/exam_contentAPI";
 
 const Exam = () => {
     const { courseId } = useParams();
@@ -23,7 +24,7 @@ const Exam = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
-    const [answers, setAnswers] = useState({});
+    const [userAnswers, setuserAnswers] = useState({});
 
     useEffect(() => {
         const fetchExam = async () => {
@@ -82,26 +83,42 @@ const Exam = () => {
         return generated_questions;
     };
     const handleChange = (id, value) => {
-        setAnswers((prev) => ({ ...prev, [id]: value }));
+        setuserAnswers((prev) => ({ ...prev, [id]: value }));
     };
 
     const handleSubmit = async () => {
-        console.log("Submitted answers:", answers);
         const examItem = {
             courseId: courseId,
             userId: null,
             topic: course.title,
             questions: exam.questions,
-            answers: answers,
+            answers: userAnswers,
         }
-        
+
         try {
             await addExamWithAnswers(examItem);
             console.log("Exam saved successfully");
-            
+
         } catch (err) {
             setError(err.message || "Failed to save exam");
             console.error("Exam saving error:", err);
+            setLoading(false);
+        }
+    };
+
+    const handleReview = async () => {
+        try {
+            const score = await evaluateExamAnswers({
+                questions: exam.questions, 
+                user_answers: userAnswers,
+            })
+            if (!score) {
+                setError("Failed to evaluate user answers");
+            }
+            console.log("Final score: ", score.final_score);
+        } catch (err) {
+            setError(err.message || "Failed to evaluate answers");
+            console.error("Evaluation error:", err);
             setLoading(false);
         }
     };
@@ -169,10 +186,10 @@ const Exam = () => {
 
             <ExamSidebar
                 questions={exam.questions}
-                answers={answers}
+                userAnswers={userAnswers}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit && handleReview}
             />
 
             <Box
@@ -188,7 +205,7 @@ const Exam = () => {
                 {selectedQuestion ? (
                     <QuestionContent
                         question={selectedQuestion}
-                        answer={answers[selectedQuestion.id]}
+                        answer={userAnswers[selectedQuestion.id]}
                         onChange={handleChange}
                     />
                 ) : (
