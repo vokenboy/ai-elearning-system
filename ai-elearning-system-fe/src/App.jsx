@@ -11,7 +11,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
 import Exam from "./pages/Exam";
-import ExamResults from "./pages/ExamResults";
+import ExamFeedback from "./pages/ExamFeedback";
 
 function App() {
     console.log("App component rendering");
@@ -28,6 +28,10 @@ function App() {
                             <Route
                                 path="/courses/:courseId/exam"
                                 element={<Exam />}
+                            />
+                            <Route
+                                path="/courses/:courseId/examResults"
+                                element={<ExamFeedback />}
                             />
                         </Routes>
                     </div>
