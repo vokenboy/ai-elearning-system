@@ -1,12 +1,10 @@
 from pydantic import BaseModel
+from typing import List
 
 class TaskRequest(BaseModel):
-    topic: str
-    description: str
+    topics: List[dict]
     level: str
-    question_type: str
+    questions_schema: List[dict]
 
 class TaskResponse(BaseModel):
-    question: str
-    options: str
-    answer: str
+    questions: List[dict]

@@ -3,7 +3,7 @@ const Exam = require("../models/exam.Model");
 exports.getExamByCourseId = async (req, res) => {
     try {
         const { id } = req.params;
-        const exams = await Exam.find({ courseId: id });
+        const exams = await Exam.findOne({ courseId: id });
 
         if (!exams || exams.length === 0) {
             return res

@@ -11,17 +11,16 @@ from google.genai.types import GenerateContentConfig, HttpOptions
 load_dotenv()
 
 router = APIRouter(
-    prefix="/generate_exam_question",
+    prefix="/generate_exam_questions",
 )
 
 @router.post("/")
-def generate_exam_question(task_request: TaskRequest):
+def generate_exam_questions(task_request: TaskRequest):
     
     prompt = """
-        Topic: {task_request.topic}
-        Description: {task_request.description}
+        Topics: {task_request.topics}
         Level: {task_request.level}
-        Question_type: {task_request.level}
+        Question_Schema: {task_request.questions_schema}
     """
 
     client = genai.Client(
@@ -34,21 +33,29 @@ def generate_exam_question(task_request: TaskRequest):
         config=GenerateContentConfig(
             system_instruction = [
             "You are Software Engineering teacher.",
-            "You write short and easy to understand programing question for your students about something from given description.",
-            "Answers to the question can be single select, open question, multiple select.",
+            "You write short and easy to understand programing questions for your students about something from given topic with description.",
+            "Make questions cover as much of topic as possible.",
+            "Questions cannot repeat.",
+            "Answers to the questions can be single select, open question, multiple select.",
             "Based on question type generate possible answers for the question.",
             "For single select generate one correct and other incorrect answers.",
             "For multiple select question generate few correct and few incorrect answers.",
             "For open question generate just the question with possible answer.",
             "You receive a list of data and you need to write a question for your students.",
-            "Data contains: topic, language, description, level, question type.",
+            "Data contains: topics, level, questions schema.",
             "You make task diffuculty based on level.",
-            "Question has to be generated randomly using description.",
+            "Question has to be generated randomly using questions schema and descriptions from topics.",
+            "Take topics descriptions based on which topic you select from questions schema.",
             "Questions are generated for exam for the specific programming language.",
+            "Make as many questions as there are in questions schema.",
             "Your response must be in JSON object containing the following",
-            "* question: string",
-            "* options: string",
-            "* answer: string",
+            "* questions: list which contains: "
+            "* id : integer(number of index+1), "
+            "* question : string, "
+            "* question_type: string, "
+            "* options: list of strings, "
+            "* score: number given in questions schema, "
+            "* answers: list of strings",
             "You expect a short and right answer from your students."
         ]
         ),

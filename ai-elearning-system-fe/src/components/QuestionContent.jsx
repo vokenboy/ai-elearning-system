@@ -13,11 +13,11 @@ import {
 
 const QuestionContent = ({
     question,
-    answer = question.type === "multiSelect" ? [] : "",
+    answer = question.question_type === "multiple select" ? [] : "",
     onChange,
 }) => {
     const renderInput = () => {
-        switch (question.type) {
+        switch (question.question_type) {
             case "open":
                 return (
                     <TextField
@@ -30,7 +30,7 @@ const QuestionContent = ({
                         sx={{ mt: 2 }}
                     />
                 );
-            case "singleSelect":
+            case "single select":
                 return (
                     <Box sx={{ mt: 2 }}>
                         <FormControl component="fieldset">
@@ -53,7 +53,7 @@ const QuestionContent = ({
                         </FormControl>
                     </Box>
                 );
-            case "multiSelect":
+            case "multiple select":
                 return (
                     <Box sx={{ mt: 2 }}>
                         <FormGroup>
@@ -98,16 +98,16 @@ const QuestionContent = ({
                     Question {question.id}
                 </Typography>
                 <Typography variant="subtitle2" color="text.secondary">
-                    Points: {question.score}
+                    Points: {question.score || 1}
                 </Typography>
             </Box>
             <Typography variant="body1" sx={{ mt: 1, mb: 3 }}>
-                {question.text}
+                {question.question}
             </Typography>
 
             {renderInput()}
 
-            {question.type === "singleSelect" && (
+            {question.type === "single select" && (
                 <Box sx={{ mt: 1 }}>
                     <Button
                         variant="outlined"
