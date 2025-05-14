@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Box, Typography, Paper, Button, Divider, Stack } from "@mui/material";
 import CodeEditor from "../components/TaskPage/CodeEditor";
 import AIFeedback from "../components/TaskPage/AiFeedback";
 import CodeOutput from "../components/TaskPage/CodeOutput";
@@ -19,11 +18,11 @@ const TaskPage = () => {
 
     if (!taskData) {
         return (
-            <Box sx={{ mt: 10 }}>
-                <Typography variant="h6" color="error">
+            <div className="mt-10">
+                <p className="text-error text-lg font-semibold">
                     No task data available.
-                </Typography>
-            </Box>
+                </p>
+            </div>
         );
     }
 
@@ -50,138 +49,74 @@ const TaskPage = () => {
         }
     };
 
-    // const handleSubmitCode = () => {
-    //     setIsSubmitting(true);
-    //     setTimeout(() => {
-    //         setFeedback(
-    //             "Great job! The logic works well. You could add more input validation or handle edge cases for bonus points."
-    //         );
-    //         setIsSubmitting(false);
-    //     }, 1500);
-    // };
-
     return (
-        <Paper
-            elevation={3}
-            sx={{
-                height: "100%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-            }}
-        >
-            <Box
-                sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}
-            >
-                <Typography variant="h5" fontWeight="bold">
+        <div className="">
+            <div className="p-4 border-b">
+                <h2 className="text-2xl font-bold">
                     {topic || "Programming Task"}
-                </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: "flex" }}>
-                <Box
-                    sx={{
-                        width: "30%",
-                        p: 3,
-                        borderRight: "1px solid",
-                        borderColor: "divider",
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                    }}
-                >
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        Task
-                    </Typography>
-                    <Typography variant="body1">{taskData.task}</Typography>
-                </Box>
-                <Box
-                    sx={{
-                        width: "70%",
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "100%",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            p: 2,
-                            borderBottom: "1px solid",
-                            borderColor: "divider",
-                        }}
-                    >
-                        <Stack direction="row" spacing={2}>
-                            <Button
-                                variant="outlined"
-                                color="secondary"
+                </h2>
+            </div>
+            <div className="flex flex-grow">
+                <div className="w-3/10 p-4 border-r flex flex-col overflow-hidden">
+                    <h3 className="text-xl font-bold mb-2">Task</h3>
+                    <p>{taskData.task}</p>
+                </div>
+                <div className="w-7/10 flex flex-col h-full">
+                    <div className="p-4">
+                        <div className="flex gap-3">
+                            <button
+                                className={`btn btn-outline btn-secondary ${
+                                    isLoading ? "loading" : ""
+                                }`}
                                 onClick={handleCompileCode}
                                 disabled={isLoading}
-                                size="medium"
                             >
-                                {isLoading ? "Compiling..." : "Test Solution"}
-                            </Button>
-                            <Button
-                                variant="contained"
+                                {isLoading ? "Testing..." : "Test Solution"}
+                            </button>
+                            <button
+                                className={`btn btn-primary ${
+                                    isSubmitting ? "loading" : ""
+                                }`}
                                 onClick={handleSubmitCode}
                                 disabled={isSubmitting}
-                                size="medium"
                             >
                                 {isSubmitting
                                     ? "Submitting..."
                                     : "Submit Solution"}
-                            </Button>
-                        </Stack>
-                    </Box>
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            overflow: "auto",
-                            p: 2,
-                            minHeight: 0,
-                        }}
-                    >
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex-grow overflow-auto min-h-0">
                         {feedback && (
-                            <Box
-                                sx={{
-                                    p: 2,
-                                    borderTop: "1px solid",
-                                    borderColor: "divider",
-                                }}
-                            >
-                                <Typography
-                                    variant="subtitle1"
-                                    fontWeight="bold"
-                                    gutterBottom
-                                >
+                            <div className="p-4">
+                                <h3 className="text-lg font-bold mb-2">
                                     Feedback
-                                </Typography>
-                                <Paper elevation={1} sx={{ p: 2 }}>
-                                    <AIFeedback feedback={feedback} />
-                                </Paper>
-
+                                </h3>
+                                <AIFeedback feedback={feedback} />
                                 {evaluation !== null && (
-                                    <Paper elevation={2} sx={{ p: 2 }}>
-                                        <Typography variant="body1">
+                                    <div className="card bg-base-200 p-4 mt-2">
+                                        <p>
                                             <strong>Score:</strong> {evaluation}{" "}
                                             / 100
-                                        </Typography>
-                                    </Paper>
+                                        </p>
+                                    </div>
                                 )}
-                            </Box>
+                            </div>
                         )}
-                        <Box sx={{ height: "60vh", overflow: "hidden" }}>
+                        <div className="h-[60vh] overflow-hidden">
                             <CodeEditor code={code} setCode={setCode} />
-                        </Box>
-                        <Box sx={{ overflow: "hidden" }}>
+                        </div>
+                        <div className="overflow-hidden">
                             <CodeOutput
                                 compileTrigger={compileTrigger}
                                 code={code}
                                 setIsLoading={setIsLoading}
                             />
-                        </Box>
-                    </Box>
-                </Box>
-            </Box>
-        </Paper>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

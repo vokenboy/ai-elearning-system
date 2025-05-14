@@ -1,20 +1,25 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { getUserRole } from "../api/auth/authAPI";
 import { useTheme } from "../hooks/useTheme";
 import icon from "./icon.png";
 
-export default function Navbar() {
+const Navbar = () => {
     const { authenticated, logout } = useAuth();
     const navigate = useNavigate();
     const userRole = getUserRole();
 
-    const [theme, setTheme] = useTheme("garden");
-    const isCorporate = theme === "forest";
+    const [theme, setTheme] = useTheme("cupcake");
+    const isBusiness = theme === "bussiness";
 
     const toggle = () => {
-        setTheme(isCorporate ? "garden" : "forest");
+        let newTheme;
+        if (theme === "bussiness") {
+            newTheme = "cupcake";
+        } else {
+            newTheme = "bussiness";
+        }
+        setTheme(newTheme);
     };
 
     const handleLogout = () => {
@@ -72,7 +77,9 @@ export default function Navbar() {
                 <img
                     src={icon}
                     alt="Logo"
-                    className="h-10 cursor-pointer"
+                    className={`h-10 cursor-pointer ${
+                        isBusiness ? "filter invert" : ""
+                    }`}
                     onClick={() => navigate("/")}
                 />
             </div>
@@ -103,7 +110,7 @@ export default function Navbar() {
                 <label className="swap swap-rotate mr-4">
                     <input
                         type="checkbox"
-                        checked={isCorporate}
+                        checked={isBusiness}
                         onChange={toggle}
                     />
                     <svg
@@ -138,4 +145,6 @@ export default function Navbar() {
             </div>
         </div>
     );
-}
+};
+
+export default Navbar;
