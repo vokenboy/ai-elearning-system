@@ -18,6 +18,7 @@ import {
     Autocomplete,
 } from "@mui/material";
 import ReactMarkdown from "react-markdown";
+import Markdown from "../Markdown";
 import { updateTopicById } from "../../api/content/contentAPI";
 
 const LANGUAGES = ["javascript", "python"];
@@ -218,7 +219,9 @@ const ContentEditDialog = ({ open, onClose, topic }) => {
                         <Typography variant="subtitle1" gutterBottom>
                             Description Preview
                         </Typography>
-                        <ReactMarkdown>{formData.description}</ReactMarkdown>
+                        <ReactMarkdown components={Markdown}>
+                            {formData.description}
+                        </ReactMarkdown>
                     </Box>
                 </Box>
             </DialogContent>

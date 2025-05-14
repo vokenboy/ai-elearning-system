@@ -98,7 +98,7 @@ const CourseContentPage = () => {
                                 {topics[activeIndex].description}
                             </ReactMarkdown>
                             <button
-                                className="btn btn-primary mt-4"
+                                className="btn btn-primary max-w-50 mt-4"
                                 onClick={() =>
                                     handleGoToTask(topics[activeIndex])
                                 }
