@@ -127,3 +127,27 @@ export const getLanguageByTopicId = async (topicId) => {
         throw error;
     }
 };
+
+export const saveSolutionContent = async (contentId,solutionResult) => {
+    try {
+        const response = await fetch(`${contentURL}/${contentId}/solution`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: getAuthHeader(),
+            },
+            body: JSON.stringify(solutionResult),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.error || "Failed to add solution"
+            );
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};

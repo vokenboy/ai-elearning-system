@@ -6,6 +6,7 @@ const {
     deleteContentById,
     updateContentById,
     getContentByContentId,
+    saveSolutionHistoryByContentId,
 } = require("../controllers/content.Controller");
 const { authenticate, authorize } = require("../middleware/auth");
 
@@ -17,5 +18,6 @@ router.get("/", getContent);
 router.delete("/:contentId", authenticate, authorize("Editor"), deleteContentById);
 router.put("/:contentId", authenticate, authorize("Editor"), updateContentById);
 router.get("/getContent/:contentId", getContentByContentId);
+router.post("/:contentId/solution", authenticate, authorize("User"), saveSolutionHistoryByContentId);
 
 module.exports = router;

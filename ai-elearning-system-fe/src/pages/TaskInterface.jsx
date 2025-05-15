@@ -6,7 +6,7 @@ import AIFeedback from "../components/AiFeedback";
 import CodeOutput from "../components/CodeOutput";
 import { evaluateTask } from "../api/task/taskAPI";
 import { useParams } from "react-router-dom";
-import { getLanguageByTopicId } from "../api/content/contentAPI";
+import { getLanguageByTopicId, saveSolutionContent } from "../api/content/contentAPI";
 
 
 const TaskInterface = () => {
@@ -58,7 +58,10 @@ const TaskInterface = () => {
             user_solution: code
         };
         try {
-            const result = await evaluateTask(payload);
+            const result = await evaluateTask(payload); //////////////////////
+            const request = {...result,task:taskData.task};
+            console.log(request);
+            saveSolutionContent(topicId,{...result,task:taskData.task});
             //console.log("Atsakymas:", result);
             setFeedback(result.feedback || "No feedback received.");
             setEvaluation(result.evaluation ?? null); 
