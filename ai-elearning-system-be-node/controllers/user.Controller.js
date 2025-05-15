@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user.Model");
+const SolutionContent = require("../models/solutionContent.Model");
 
 exports.registerUser = async (req, res) => {
     try {
@@ -134,6 +135,26 @@ exports.fetchUserCourses = async (req, res) => {
     }
 };
 
+exports.fetchUserSolutions = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        const user = getUserFromToken(authHeader.split(" ")[1]);
+
+        if (!user.id) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const existingSolutions = await SolutionContent.find({ "userId": user.id });
+        if (!existingSolutions) {
+            return res.status(404).json({ error: "Solutions not found" });
+        }
+        res.json(existingSolutions);
+    } catch (error) {
+        console.error("Error fetching user courses:", error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
 exports.enrollUserToCourse = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -164,4 +185,12 @@ exports.enrollUserToCourse = async (req, res) => {
         console.error("Error enrolling user:", error);
         res.status(500).json({ error: "Server error" });
     }
+};
+
+const getUserFromToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
 };

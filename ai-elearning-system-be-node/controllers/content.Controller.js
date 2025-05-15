@@ -1,4 +1,6 @@
 const Content = require("../models/content.Model");
+const jwt = require("jsonwebtoken");
+const SolutionContent = require("../models/solutionContent.Model");
 
 exports.addContent = async (req, res) => {
     try {
@@ -79,4 +81,40 @@ exports.getContentByContentId = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+};
+
+exports.saveSolutionHistoryByContentId = async (req, res) => {
+    try {
+        const { contentId } = req.params;
+        const { feedback, evaluation, task } = req.body;
+        const authHeader = req.headers.authorization;
+        const user = getUserFromToken(authHeader.split(" ")[1]);
+        
+        console.log(req.body);
+
+        const solutioncontent = new SolutionContent({
+            userId : user.id,
+            contentId,
+            feedback,
+            evaluation,
+            task
+        });
+
+        await solutioncontent.save();
+
+        res.status(201).json({
+            message: "Content Solution added to history",
+            solutioncontent,
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const getUserFromToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
 };
