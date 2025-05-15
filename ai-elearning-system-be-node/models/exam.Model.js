@@ -2,16 +2,12 @@ const mongoose = require("mongoose");
 
 const QuestionSchema = new mongoose.Schema({
     id: { type: Number, required: true },
-    text: { type: String, required: true },
+    topic : { type: String, required: false},
     score: { type: Number, required: true },
     type: {
         type: String,
-        enum: ["open", "singleSelect", "multiSelect"],
+        enum: ["open", "single select", "multiple select"],
         required: true,
-    },
-    options: {
-        type: [String],
-        default: undefined,
     },
 });
 
@@ -22,8 +18,13 @@ const ExamSchema = new mongoose.Schema(
             ref: "Course",
             required: true,
         },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+        },
         topic: { type: String, required: true },
-        questions: {
+        questions_schema: {
             type: [QuestionSchema],
             required: true,
             validate: (v) => Array.isArray(v) && v.length > 0,

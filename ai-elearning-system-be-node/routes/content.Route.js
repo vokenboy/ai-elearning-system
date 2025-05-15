@@ -5,6 +5,7 @@ const {
     getContent,
     deleteContentById,
     updateContentById,
+    getContentByContentId,
 } = require("../controllers/content.Controller");
 const { authenticate, authorize } = require("../middleware/auth");
 
@@ -15,5 +16,6 @@ router.get("/:courseId", getContentByCourseId);
 router.get("/", getContent);
 router.delete("/:contentId", authenticate, authorize("Editor"), deleteContentById);
 router.put("/:contentId", authenticate, authorize("Editor"), updateContentById);
+router.get("/getContent/:contentId", getContentByContentId);
 
 module.exports = router;

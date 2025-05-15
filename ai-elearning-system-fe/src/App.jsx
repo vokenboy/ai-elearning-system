@@ -12,7 +12,7 @@ import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
 import Exam from "./pages/Exam";
 import UserProfile from "./components/UserProfile";
-
+import ExamResults from "./pages/ExamResults";
 
 function App() {
     console.log("App component rendering");

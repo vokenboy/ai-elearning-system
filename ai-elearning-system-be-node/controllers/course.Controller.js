@@ -82,17 +82,17 @@ exports.updateCourse = async (req, res) => {
 
 };
 
-// gauti kursą pagal id
+// gauti kursa pagal id
 exports.getCourseById = async (req, res) => {
     try {
         const { id } = req.params;
-        const course = await Course.findById(id);
+        const course = await Course.findById(id).select('title description'); 
 
         if (!course) {
             return res.status(404).json({ error: "Course not found" });
         }
 
-        res.json(course);
+        res.json(course); 
     } catch (error) {
         console.error("Error getting course:", error);
         res.status(500).json({ error: "Server error" });

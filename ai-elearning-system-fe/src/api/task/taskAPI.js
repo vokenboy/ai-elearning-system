@@ -1,5 +1,14 @@
 import axios from "axios";
 
+export const LANGUAGE_VERSIONS = {
+    javascript: "18.15.0",
+    typescript: "5.0.3",
+    python: "3.10.0",
+    java: "15.0.2",
+    csharp: "6.12.0",
+    php: "8.2.3",
+  };
+
 const codeAPI = axios.create({
     baseURL: "https://emkc.org/api/v2/piston"
 })
@@ -26,10 +35,10 @@ export const generateTask = async (taskData) => {
     }
 };
 
-export const executeCode = async(language, version, sourceCode) => {
+export const executeCode = async(language, sourceCode) => {
     const response = await codeAPI.post("/execute", {
         "language": language,
-        "version": version,
+        "version": LANGUAGE_VERSIONS[language],
         "files": [
             {
                 "content": sourceCode,

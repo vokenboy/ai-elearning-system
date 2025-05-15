@@ -108,3 +108,22 @@ export const updateTopicById = async (topicId, topicData) => {
         throw error;
     }
 };
+
+export const getLanguageByTopicId = async (topicId) => {
+    if (!topicId) {
+        throw new Error("Course ID is required");
+    }
+    try {
+        const response = await fetch(`${contentURL}/getContent/${topicId}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.error || "Failed to fetch topics by course"
+            )
+        }
+        const data = await response.json();
+        return data.language; 
+    } catch (error) {
+        throw error;
+    }
+};
