@@ -4,6 +4,7 @@ const QuestionsSchema = new mongoose.Schema({
     id: { type: Number, required: false },
     question: { type: String, required: true },
     score: { type: Number, required: false },
+    topic: { type: String, required: true },
     question_type: {
         type: String,
         enum: ["open", "single select", "multiple select"],

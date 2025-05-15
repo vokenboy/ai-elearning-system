@@ -50,12 +50,13 @@ def generate_exam_questions(task_request: TaskRequest):
             "Make as many questions as there are in questions schema.",
             "Your response must be in JSON object containing the following",
             "* questions: list which contains: "
-            "* id : integer(number of index+1), "
-            "* question : string, "
-            "* question_type: string, "
-            "* options: list of strings, "
-            "* score: number given in questions schema, "
-            "* answers: list of strings",
+            "*      id : integer(number of index+1), "
+            "*      question : string, "
+            "*      topic: string, "
+            "*      question_type: string, "
+            "*      options: list of strings, "
+            "*      score: number given in questions schema, "
+            "*      answers: list of strings",
             "You expect a short and right answer from your students."
         ]
         ),

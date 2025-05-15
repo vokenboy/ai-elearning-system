@@ -1,27 +1,31 @@
 import { useState, useEffect, useRef } from "react";
 import {
     Box,
-    AppBar,
-    Toolbar,
+    Card,
+    CardContent,
+    Button,
     Typography,
-    CssBaseline,
     CircularProgress,
 } from "@mui/material";
-import { useParams, useLocation } from "react-router-dom";
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { evaluateExamAnswers } from "../api/exam/exam_contentAPI";
-import { getContentByCourseId } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
+import EvaluationCard from "../components/EvaluationCard";
 
 const ExamFeedback = () => {
 
     const { courseId } = useParams();
     const location = useLocation();
     const hasFetchedRef = useRef(false);
+    const navigate = useNavigate();
 
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [finalFeedback, setFinalFeedback] = useState({});
+    const [examResults, setExamResults] = useState({});
+    const [questions, setQuestions] = useState(null);
+    const [userAnswers, setUserAnswers] = useState(null);
 
     useEffect(() => {
         loadFeedback();
@@ -34,21 +38,21 @@ const ExamFeedback = () => {
 
         setLoading(true)
         try {
-            const feedback = await EvaluateExamAnswers();
+            const results = await EvaluateExamAnswers();
             const courseData = await getCourseById(courseId);
             setCourse(courseData);
+            setQuestions(location.state.questions)
+            setUserAnswers(location.state.user_answers)
 
-            if (feedback && feedback.feedback?.length > 0) {
-                console.log("feedback: ", feedback);
-                setFinalFeedback(feedback)
+            if (results && results.evaluation?.length > 0) {
+                setExamResults(results)
             } else {
-                throw new Error("No feedback generated.");
+                throw new Error("No exam results generated.");
             }
 
         } catch (err) {
-            console.error(`Error returning feedback ${courseId}:`, err);
-            setError("Failed to return feedback. Please try again.");
-            navigate(`/courses/${courseId}/exam`);
+            console.error(`Error returning exam results ${courseId}:`, err);
+            setError("Failed to return exam results. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -110,28 +114,101 @@ const ExamFeedback = () => {
         );
     }
     return (
-        <Box sx={{ p: 4 }}>
-            <Typography variant="h6" gutterBottom>
-                Final score: {finalFeedback?.final_score || 0}
-            </Typography>
-
-            <Typography variant="h6" gutterBottom>
-                Feedback:
-            </Typography>
-            {finalFeedback?.feedback?.map((feedback, index) => (
-                <Typography key={index} variant="body1">
-                    Question {index + 1}: {feedback}
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            p: 4,
+        }}>
+            <Box sx={{ width: "100%", maxWidth: 400, mx: "auto", mt: 3 }}>
+                <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
+                    Final Score
                 </Typography>
-            ))}
+                <Box
+                    sx={{
+                        position: "relative",
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: "#e0e0e0",
+                        overflow: "hidden",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: `${examResults?.final_score}%`,
+                            height: "100%",
+                            bgcolor:
+                                examResults?.final_score < 5
+                                    ? "#d32f2f"
+                                    : examResults?.final_score < 8
+                                        ? "#fbc02d"
+                                        : "#388e3c",
+                            borderRadius: 20,
+                            transition: "width 3s ease-in-out",
+                        }}
+                    />
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            fontWeight: "bold",
+                            color: 'text.primary',
+                        }}
+                    >
+                        {`${examResults?.final_score}% / 100%`}
+                    </Typography>
+                </Box>
+            </Box>
 
-            <Typography variant="h6" gutterBottom>
-                Scores:
+
+            <Typography variant="h6" gutterBottom sx={{fontWeight: 'bold'}}>
+                Overall feedback:
             </Typography>
-            {finalFeedback?.scores?.map((score, index) => (
-                <Typography key={index} variant="body2">
-                    Question {index + 1}: {score} points
-                </Typography>
-            ))}
+            <Typography variant="captions" gutterBottom>
+                {examResults?.improvements}
+            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "flex-start",
+                    gap: 2,
+                    maxWidth: "100%",
+                }}
+            >
+                {examResults?.evaluation?.map((item, index) => (
+                    <Box
+                        key={index}
+                        sx={{
+                            flex: "1 1 320px",
+                            maxWidth: 900,
+                            minWidth: 550,
+                            display: "flex",
+                        }}
+                    >
+                        <EvaluationCard
+                            index={index}
+                            evaluation={item}
+                            question={questions[index]}
+                            userAnswer={userAnswers[index+1]}
+                        />
+                    </Box>
+                ))}
+            </Box>
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => navigate(`/courses/${courseId}/content`)}
+                >
+                    Go back to course
+                </Button>
+            </Box>
         </Box>
     );
 }
