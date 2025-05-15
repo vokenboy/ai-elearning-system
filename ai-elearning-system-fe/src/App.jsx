@@ -46,6 +46,8 @@ function App() {
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/courses" element={<CourseView />} />
+                            <Route path="/api/users/me" element={<UserProfile />} />
+
                             <Route
                                 path="/courses/:courseId/content"
                                 element={<CourseContent />}

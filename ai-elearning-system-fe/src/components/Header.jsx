@@ -36,7 +36,16 @@ const Header = () => {
                  <Button color="inherit" component={Link} to="/courses">
                             Courses
                  </Button>
+                 
+                {authenticated && (
+                    <Button color="inherit" component={Link} to="/api/users/me">
+                        User profile
+                    </Button>
+                )}
+                 
                 {authenticated ? (
+
+                    
                     <Button color="inherit" onClick={handleLogout}>
                         Logout
                     </Button>
