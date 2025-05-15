@@ -69,12 +69,49 @@ exports.loginUser = async (req, res) => {
         res.status(200).json({
             message: "Login successful",
             token,
+            user: { id: user._id, name: user.name, email: user.email, role: user.role },
+
         });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ error: "Server error" });
     }
 };
+exports.getCurrentUser = async (req, res) => {
+  try {
+    console.log(req.user); 
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching current user:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.updateCurrentUser = async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, email, role },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 
 exports.fetchUserCourses = async (req, res) => {
     try {
