@@ -6,6 +6,7 @@ class EvaluateRequest(BaseModel):
     user_answers: dict
 
 class EvaluateResponse(BaseModel):
-    scores: List[int]
-    final_score: int
-    feedback: List[str]
+    evaluation: List[dict]
+    final_score: float
+    improvements: str
+    topic_correctness: List[dict]

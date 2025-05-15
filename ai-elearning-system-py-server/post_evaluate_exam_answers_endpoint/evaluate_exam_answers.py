@@ -39,11 +39,26 @@ def evaluate_exam_answers(evaluate_request: EvaluateRequest):
                 "Evaluate the user's answers focusing on the following criteria:",
                 "Feedback: Provide constructive feedback highlighting strengths and areas for improvement. Mention specific parts of the answer that are incorrect and give throughout explanation why they were incorrect. And mention parts that were correct and throughout explanation why they were correct.",
                 "Scoring: Assign a numerical score from 1 to given questions scores based on the overall quality of the answer. Deduct points for deviations from actual answers.",
-                "Output your evaluation in JSON format with the following structure:",
+                "Improvements: Provide constructive but motivational feedback of all answers and what needs to be improved, so that the user would do better next time, address the student as 'you'.",
+                "Topic correctness: group up same topics and give a percentage of how well student answered all questions based on the score of those topics",
+                "Question and topic is the same as given in request",
+                "Final score should be counted by summing points from all answered questions and dividing by the total maximum points, then converting that fraction to a score out of 100, if its 100% then just return 100"
+                "Output your evaluation of every given question in JSON format with the following structure:",
                 "  {",
-                "    'scores': 'list of decimal',",
-                "    'final_score': 'decimal'",
-                "    'feedback': 'list of string',",
+                "    'evaluation': ["
+                "       'id: 'number of question',"
+                "       'question': 'string',"
+                "       'topic': 'string',"
+                "       'correctness': 'string',"
+                "       'score': 'decimal',"
+                "       'feedback': 'string',"
+                "    ]",
+                "   'final_score': 'decimal'",
+                "   'improvements: 'string'",
+                "   'topic_correctness: ["
+                "       'topic': 'string',"
+                "       'correctness: 'percent',"
+                "    ]",
                 "  }",
             ]
         ),

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     Box,
     AppBar,
@@ -7,14 +7,13 @@ import {
     CssBaseline,
     CircularProgress,
 } from "@mui/material";
-import { Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ExamSidebar from "../components/ExamSidebar";
 import QuestionContent from "../components/QuestionContent";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
 import { getExamByCourseId } from "../api/exam/examAPI";
 import { generateExamQuestion, addExamWithAnswers } from "../api/exam/exam_contentAPI";
-import { evaluateExamAnswers } from "../api/exam/exam_contentAPI";
 
 const Exam = () => {
     const { courseId } = useParams();
@@ -24,10 +23,17 @@ const Exam = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
-    const [userAnswers, setuserAnswers] = useState({});
+    const [userAnswers, setUserAnswers] = useState({});
+
+    const params = useParams();
+    const navigate = useNavigate();
+    const hasFetchedRef = useRef(false);
 
     useEffect(() => {
         const fetchExam = async () => {
+            if (hasFetchedRef.current) return;
+            hasFetchedRef.current = true;
+
             setLoading(true);
             try {
                 const { examSchema, courseData, topics } = await loadData(courseId);
@@ -83,7 +89,7 @@ const Exam = () => {
         return generated_questions;
     };
     const handleChange = (id, value) => {
-        setuserAnswers((prev) => ({ ...prev, [id]: value }));
+        setUserAnswers((prev) => ({ ...prev, [id]: value }));
     };
 
     const handleSubmit = async () => {
@@ -98,7 +104,14 @@ const Exam = () => {
         try {
             await addExamWithAnswers(examItem);
             console.log("Exam saved successfully");
-            await EvaluateExamAnswers();
+            navigate(`/courses/${params.courseId}/examResults`,
+                {
+                    state: {
+                        questions: exam.questions,
+                        user_answers: userAnswers
+                    }
+                }
+            );
         } catch (err) {
             setError(err.message || "Failed to save exam");
             console.error("Exam saving error:", err);
@@ -106,22 +119,6 @@ const Exam = () => {
         }
     };
 
-    const EvaluateExamAnswers = async () => {
-        try {
-            const score = await evaluateExamAnswers({
-                questions: exam.questions, 
-                user_answers: userAnswers,
-            })
-            if (!score) {
-                setError("Failed to evaluate user answers");
-            }
-            console.log("Final score: ", score.final_score);
-        } catch (err) {
-            setError(err.message || "Failed to evaluate answers");
-            console.error("Evaluation error:", err);
-            setLoading(false);
-        }
-    };
 
     if (loading) {
         return (
