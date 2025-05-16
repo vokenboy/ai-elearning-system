@@ -86,7 +86,7 @@ exports.updateCourse = async (req, res) => {
 exports.getCourseById = async (req, res) => {
     try {
         const { id } = req.params;
-        const course = await Course.findById(id).select('title description'); 
+        const course = await Course.findById(id); 
 
         if (!course) {
             return res.status(404).json({ error: "Course not found" });
