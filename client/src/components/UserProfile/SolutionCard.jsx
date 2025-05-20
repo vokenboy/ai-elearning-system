@@ -28,7 +28,8 @@ const SolutionCard = ({ solution }) => {
                     <strong>Feedback:</strong> {solution.feedback}
                 </p>
                 <p className="text-xs text-gray-500">
-                    Submitted: {new Date(solution.createdAt).toLocaleString()}
+                    Submitted:{" "}
+                    {new Date(solution.createdAt).toLocaleString("lt-LT")}
                 </p>
             </div>
         </div>
