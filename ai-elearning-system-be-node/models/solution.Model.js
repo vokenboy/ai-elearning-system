@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const solutionContentSchema = new mongoose.Schema(
     {
         userId: {
@@ -15,16 +14,16 @@ const solutionContentSchema = new mongoose.Schema(
         },
         feedback: {
             type: String,
-            required: true
+            required: true,
         },
         evaluation: {
             type: Number,
-            required: true
+            required: true,
         },
         task: {
             type: String,
-            required: true
-        }
+            required: true,
+        },
     },
     { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );

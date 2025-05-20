@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema(
                 ref: "Course",
             },
         ],
-        
     },
     {
         timestamps: true,

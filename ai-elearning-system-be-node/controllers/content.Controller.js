@@ -1,6 +1,6 @@
 const Content = require("../models/content.Model");
 const jwt = require("jsonwebtoken");
-const SolutionContent = require("../models/solutionContent.Model");
+const SolutionContent = require("../models/solution.Model");
 
 exports.addContent = async (req, res) => {
     try {
@@ -43,8 +43,8 @@ exports.getContentByCourseId = async (req, res) => {
     }
 };
 
-exports.deleteContentById = async(req, res) => {
-    try{
+exports.deleteContentById = async (req, res) => {
+    try {
         const { contentId } = req.params;
         const content = await Content.findByIdAndDelete(contentId);
         if (!content) {
@@ -57,18 +57,22 @@ exports.deleteContentById = async(req, res) => {
     }
 };
 
-exports.updateContentById = async(req, res) => {
-    try{
+exports.updateContentById = async (req, res) => {
+    try {
         const { contentId } = req.params;
         const { topic, language, description, tags } = req.body;
 
-        const content = await Content.findByIdAndUpdate(contentId,{topic, language, description, tags});
+        const content = await Content.findByIdAndUpdate(contentId, {
+            topic,
+            language,
+            description,
+            tags,
+        });
         if (!content) {
             return res.status(404).json({ error: "Content not found" });
         }
 
         res.status(200).json({ message: "Content updated successfully" });
-
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -89,15 +93,15 @@ exports.saveSolutionHistoryByContentId = async (req, res) => {
         const { feedback, evaluation, task } = req.body;
         const authHeader = req.headers.authorization;
         const user = getUserFromToken(authHeader.split(" ")[1]);
-        
+
         console.log(req.body);
 
         const solutioncontent = new SolutionContent({
-            userId : user.id,
+            userId: user.id,
             contentId,
             feedback,
             evaluation,
-            task
+            task,
         });
 
         await solutioncontent.save();
@@ -112,9 +116,9 @@ exports.saveSolutionHistoryByContentId = async (req, res) => {
 };
 
 const getUserFromToken = (token) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    throw new Error("Invalid or expired token");
-  }
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        throw new Error("Invalid or expired token");
+    }
 };
