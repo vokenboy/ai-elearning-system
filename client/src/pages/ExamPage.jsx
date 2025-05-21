@@ -9,12 +9,9 @@ import { getExamByCourseId } from "../api/exam/examAPI";
 import { generateExamQuestion, addExamWithAnswers } from "../api/exam/examContentAPI";
 
 import {
-    Box,
-    AppBar,
     Toolbar,
     Typography,
     CssBaseline,
-    CircularProgress,
 } from "@mui/material";
 
 const ExamPage = () => {
@@ -124,59 +121,16 @@ const ExamPage = () => {
 
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                    gap: 3,
-                }}
-            >
-                <CircularProgress size={50} sx={{ color: "#1976d2" }} />
-                <Typography
-                    variant="h6"
-                    sx={{
-                        mt: 2,
-                        fontWeight: "bold",
-                        color: "#333",
-                        fontSize: "1.2rem",
-                        letterSpacing: "0.5px",
-                    }}
-                >
-                    Preparing your exam... This won't take long!
-                </Typography>
-            </Box>
-        );
-    }
+            <div className="flex flex-col items-center justify-center h-screen space-y-6 bg-white">
 
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                    gap: 3,
-                }}
-            >
-                <CircularProgress size={50} sx={{ color: "#1976d2" }} />
-                <Typography
-                    variant="h6"
-                    sx={{
-                        mt: 2,
-                        fontWeight: "bold",
-                        color: "#333",
-                        fontSize: "1.2rem",
-                        letterSpacing: "0.5px",
-                    }}
-                >
+                <div className="w-10 h-10 border-4 border-gray-500 border-t-transparent rounded-full animate-spin" />
+
+                <p className="text-lg font-semibold text-gray-700 text-center">
                     Preparing your exam... This won't take long!
-                </Typography>
-            </Box>
+                </p>
+            </div>
+
+
         );
     }
 
@@ -184,37 +138,20 @@ const ExamPage = () => {
         exam.questions.find((q) => q.id === selectedId) ?? null;
 
     return (
-        <Box sx={{ display: "flex", height: "100vh" }}>
-            <CssBaseline />
-            <AppBar
-                position="fixed"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" noWrap>
-                        {course?.title}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <ExamSidebar
-                questions={exam.questions}
-                userAnswers={userAnswers}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-                onSubmit={handleSubmit}
-            />
-
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    bgcolor: "background.paper",
-                    p: 4,
-                    overflow: "auto",
-                }}
-            >
-                <Toolbar />
+        <div className="flex flex-row-reverse h-screen bg-white font-sans">\
+            <div className="navbar bg-base-200 fixed h-18 top-0 z-70 px-4">
+                <label className="text-gray-900 font-semibold text-xl">
+                    {course?.title} Exam
+                </label>
+            </div>
+                <ExamSidebar
+                    questions={exam.questions}
+                    userAnswers={userAnswers}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                    onSubmit={handleSubmit}
+                />
+            <div className="flex-grow p-4 mx:auto pt-18">
                 {selectedQuestion ? (
                     <QuestionContent
                         question={selectedQuestion}
@@ -222,12 +159,12 @@ const ExamPage = () => {
                         onChange={handleChange}
                     />
                 ) : (
-                    <Typography variant="body1">
+                    <div variant="body1">
                         Please select a question.
-                    </Typography>
+                    </div>
                 )}
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

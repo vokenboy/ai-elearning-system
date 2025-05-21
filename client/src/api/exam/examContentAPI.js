@@ -1,6 +1,6 @@
 import { getUserId } from "../auth/authAPI";
 
-const exam_contentURL = `http://localhost:5000/api/exam_contents`;
+const examContentURL = `http://localhost:5000/api/exam_contents`;
 
 export const generateExamQuestion = async (examSchema) => {
     try {
@@ -50,7 +50,7 @@ export async function addExamWithAnswers(examData) {
     try {
         examData.userId = getUserId();
 
-        const response = await fetch(`${exam_contentURL}/addExamWithAnswers`, {
+        const response = await fetch(`${examContentURL}/addExamWithAnswers`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
