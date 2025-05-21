@@ -1,95 +1,63 @@
-import { useEffect } from "react";
 import {
-    Box,
-    Card,
     Typography,
-    Stack,
     Divider,
 } from "@mui/material";
-import AnswersReview from "../components/AnswersReview";
+import AnswersReview from "./AnswersReview";
 
 const EvaluationCard = ({ index, evaluation, question, userAnswer }) => {
-
+    const bgClass = evaluation?.score === question?.score
+        ? "border-teal-200 bg-teal-100"
+        : evaluation?.score === 0
+            ? "border-secondary bg-pink-100"
+            : "border-accent bg-orange-100"
     return (
-        <Card
+        <div
             key={index}
-            variant="outlined"
-            sx={{
-                mt: 2,
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-                bgcolor:
-                    evaluation?.score === question?.score
-                        ? '#d0f0c0'
-                        : evaluation?.score === 0
-                            ? '#f8d7da'
-                            : '#fff9c4',
-            }}
+            className={`flex flex-col h-full rounded-xl p-4 border ${bgClass} `}
         >
-            <Box sx={{ p: 2 }}>
-                <Stack
-                    direction="row"
-                    sx={{
-                        justifyContent: "space-between",
-                        alignevaluations: 'left'
-                    }}
-                >
-                    <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-row justify-between items-left">
+                    <h1 className="text-xl font-bold">
                         Question {index + 1}:
-                        <Typography gutterBottom variant="subtitle1" component="div">
+                        <h2 className="text-lg font-medium text-base font-normal">
                             {question?.question}
-                        </Typography>
-                    </Typography>
-                    <Box
-                        sx={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 1,
-                            backgroundColor: "#f5f5f5",
-                            px: 2,
-                            py: 1,
-                            whiteSpace: "nowrap", 
-                            borderRadius: 2,
-                            maxHeight:30,
-                        }}
-                    >
-                        <Typography variant="subtitle2" color="text.secondary" sx={{ flexShrink: 0 }}>
+                        </h2>
+                    </h1>
+                    <div className="inline-flex items-center gap-2 bg-base-100 text-sm px-3 py-1 rounded-md max-h-10 shadow-sm whitespace-nowrap">
+                        <span className="text-base font-medium">
                             Score:
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        </span>
+                        <span className="font-medium text-base tracking-tight ">
                             {evaluation?.score} / {question?.score}
-                        </Typography>
-                    </Box>
+                        </span>
+                    </div>
 
-                </Stack>
-                <Divider />
 
-                <Typography variant="body1" component="div">
-                    Your answer:
-                    <AnswersReview
-                        question={question}
-                        answer={userAnswer}
-                        showCorrect={false}
-                    />
-                </Typography>
+                </div>
+                <hr className={bgClass} />
 
-                <Divider />
-                <Typography variant="body1" component="div">
-                    Correct answer:
-                    <AnswersReview
-                        question={question}
-                        answer={question?.answers}
-                    />
-                </Typography>
+                <p>Your answer:</p>
+                <AnswersReview
+                    question={question}
+                    answer={userAnswer}
+                    showCorrect={false}
+                />
 
-                <Divider />
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Feedback: {evaluation?.feedback}
-                </Typography>
+                <hr className={bgClass} />
+                <p>Correct answer:</p>
+                <AnswersReview
+                    question={question}
+                    answer={question?.answers}
+                />
 
-            </Box>
-        </Card >
+
+                <hr className={bgClass} />
+                <div className="text-gray-500">
+                    Feedback:  {evaluation?.feedback}
+                </div>
+
+            </div>
+        </div >
     );
 
 }

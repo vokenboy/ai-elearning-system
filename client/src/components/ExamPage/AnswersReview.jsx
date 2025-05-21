@@ -17,86 +17,58 @@ const AnswersReview = ({ question, answer, showCorrect = true }) => {
         switch (question.question_type) {
             case "open":
                 return (
-                    <Typography
-                        sx={{
-                            whiteSpace: 'pre-wrap', // preserves line breaks
-                            bgcolor: '#f5f5f5',
-                            p: 2,
-                            minHeight: 100,
-                            borderRadius: 1,
-                            border: '1px solid #ccc',
-                        }}
-                    >
+                    <div className="whitespace-pre-wrap bg-white p-2 min-h-20 rounded-md text-base rounded-lg w-full">
                         {answer}
-                    </Typography>
+                    </div>
                 );
             case "single select":
                 return (
-                    <FormControl component="fieldset">
-                        <RadioGroup value={answer}>
-                            {question.options.map((opt, idx) => {
-                                const isCorrect = correctAnswers.includes(opt);
-                                const isSelected = opt === answer;
+                    <div className="grid gap-4 mt-4 mb-4">
+                        {question.options.map((opt, idx) => {
+                            const isCorrect = correctAnswers.includes(opt);
+                            const isSelected = opt === answer;
 
-                                return (
-                                    <FormControlLabel
-                                        key={idx}
-                                        value={opt}
-                                        control={<Radio />}
-                                        disabled
-                                        label={
-                                            <Typography
-                                                sx={{
-                                                    fontWeight: isCorrect && showCorrect ? "bold" : "normal",
-                                                    color:
-                                                        isSelected && isCorrect
-                                                            ? "#1b5e20"
-                                                            : isSelected && !isCorrect
-                                                                ? "#b71c1c"
-                                                                : "text.primary",
-                                                }}
-                                            >
-                                                {opt}
-                                            </Typography>
-                                        }
-                                    />
-                                )
-                            })}
-                        </RadioGroup>
-                    </FormControl>
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`px-4 py-2 border rounded-xl ${isSelected
+                                            ? isCorrect
+                                                ? "border-green-600 bg-green-50 text-green-800"
+                                                : "border-red-500 bg-red-50 text-red-700"
+                                            : isCorrect && showCorrect
+                                                ? "border-green-600 bg-green-50 text-green-800"
+                                                : "border-gray-300 text-gray-700"
+                                        }`}
+                                >
+                                    {opt}
+                                </div>
+                            );
+                        })}
+                    </div>
                 );
             case "multiple select":
                 return (
-                    <FormGroup>
+                    <div className="grid gap-2 mt-4 mb-4">
                         {question.options.map((opt, idx) => {
                             const isSelected = Array.isArray(answer) && answer.includes(opt);
                             const isCorrect = correctAnswers.includes(opt);
                             return (
-                                <FormControlLabel
+                                <div
                                     key={idx}
-                                    control={
-                                        <Checkbox
-                                            checked={isSelected}
-                                            disabled
-                                        />
-                                    }
-                                    label={<Typography
-                                        sx={{
-                                            fontWeight: "normal",
-                                            color:
-                                                isSelected && isCorrect
-                                                    ? "#1b5e20"
-                                                    : isSelected && !isCorrect
-                                                        ? "#b71c1c"
-                                                        : "text.primary",
-                                        }}
-                                    >
-                                        {opt}
-                                    </Typography>}
-                                />
+                                    className={`px-4 py-2 border rounded-xl ${isSelected
+                                            ? isCorrect
+                                                ? "border-green-600 bg-green-50 text-green-800"
+                                                : "border-red-500 bg-red-50 text-red-700"
+                                            : isCorrect && showCorrect
+                                                ? "border-green-600 bg-green-50 text-green-800"
+                                                : "border-gray-300 text-gray-700"
+                                        }`}
+                                >
+                                    {opt}
+                                </div>
                             )
                         })}
-                    </FormGroup>
+                    </div>
                 );
             default:
                 return null;
@@ -104,17 +76,9 @@ const AnswersReview = ({ question, answer, showCorrect = true }) => {
     };
 
     return (
-        <Box
-            sx={{
-                maxWidth: "100%",
-                p: 2,
-                bgcolor: '#f1f0ea',
-                color: 'text.primary',
-                textAlign: 'left'
-            }}
-        >
+        <div className="max-w-full p-2 bg-white text-base text-left rounded-lg">
             {renderInput()}
-        </Box>
+        </div>
     );
 };
 

@@ -14,7 +14,7 @@ const QuestionContent = ({
                             id="answer"
                             value={answer}
                             onChange={(e) => onChange(question.id, e.target.value)}
-                            className="h-20 border border-gray-300 text-gray-900 text-base rounded-lg w-full p-4 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                            className="h-20 border border-gray-300 text-teal-900 text-base rounded-lg w-full p-4 focus:outline-none focus:ring-2 focus:ring-teal-300"
                             placeholder="Type your answer here..."
                         />
                     </div>
@@ -29,7 +29,7 @@ const QuestionContent = ({
                                     key={idx}
                                     htmlFor={`option-${question.id}-${idx}`}
                                     className={`block p-4 border rounded-xl cursor-pointer text-base transition-all
-                                            ${selected ? 'border-gray-500 bg-gray-50 text-gray-700' : 'border-gray-300 hover:border-gray-400'}`}
+                                            ${selected ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-gray-300 hover:border-gray-400'}`}
                                 >
                                     <input
                                         type="radio"
@@ -59,7 +59,7 @@ const QuestionContent = ({
                                     key={idx}
                                     htmlFor={`option-${question.id}-${idx}`}
                                     className={`block p-4 border rounded-xl cursor-pointer text-base transition-all
-                                            ${answer.includes(opt) ? 'border-gray-500 bg-gray-50' : 'border-gray-300 hover:border-gray-400'}`}
+                                            ${answer.includes(opt) ? 'border-teal-500 bg-teal-50' : 'border-gray-300 hover:border-gray-400'}`}
                                 >
                                     <input
                                         type="checkbox"
@@ -77,7 +77,7 @@ const QuestionContent = ({
                                         }}
                                         className="hidden"
                                     />
-                                    <span className="text-gray-800 text-base">
+                                    <span className="text-teal-800 text-base">
                                         {opt}
                                     </span>
                                 </label>
@@ -97,7 +97,7 @@ const QuestionContent = ({
 
                     Question {question.id}
                 </p>
-                <p className="text-gray-500 text-sm ">
+                <p className="text-teal-500 text-sm ">
                     Points: {question.score}
                 </p>
             </div>
