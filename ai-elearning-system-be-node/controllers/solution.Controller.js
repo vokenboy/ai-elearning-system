@@ -1,12 +1,14 @@
 const SolutionContent = require("../models/solution.Model");
 
 exports.saveTaskSolution = async (req, res) => {
-    const { userId, contentId, task, feedback, evaluation } = req.body;
+    const { userId, contentId, taskTitle, task, feedback, evaluation } =
+        req.body;
 
     if (
         !userId ||
         !contentId ||
         !task ||
+        !taskTitle ||
         feedback == null ||
         evaluation == null
     ) {
@@ -21,6 +23,7 @@ exports.saveTaskSolution = async (req, res) => {
         const newSolution = new SolutionContent({
             userId,
             contentId,
+            taskTitle,
             task,
             feedback,
             evaluation,

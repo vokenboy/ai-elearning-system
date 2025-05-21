@@ -2,12 +2,12 @@ const SolutionCard = ({ solution }) => {
     return (
         <div
             tabIndex={0}
-            className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box mb-2"
+            className="collapse collapse-arrow bg-base-100 rounded-box mb-2"
         >
             <div className="collapse-title flex justify-between items-center">
                 <span className="font-bold">
                     {solution.task.length > 50
-                        ? solution.task.slice(0, 50) + "…"
+                        ? solution.taskTitle
                         : solution.task}
                 </span>
                 <span

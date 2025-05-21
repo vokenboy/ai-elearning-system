@@ -72,6 +72,7 @@ const TaskPage = () => {
             await saveTaskSolution({
                 userId,
                 contentId: topicId,
+                taskTitle: topic,
                 task: taskData.task,
                 feedback: result.feedback,
                 evaluation: result.evaluation,

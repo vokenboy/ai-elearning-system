@@ -12,16 +12,20 @@ const solutionContentSchema = new mongoose.Schema(
             ref: "Content",
             required: true,
         },
+        taskTitle: {
+            type: String,
+            required: true,
+        },
+        task: {
+            type: String,
+            required: true,
+        },
         feedback: {
             type: String,
             required: true,
         },
         evaluation: {
             type: Number,
-            required: true,
-        },
-        task: {
-            type: String,
             required: true,
         },
     },
