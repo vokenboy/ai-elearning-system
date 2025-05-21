@@ -17,7 +17,7 @@ const drawerWidth = 240;
 
 const ExamSidebar = ({
     questions,
-    answers,
+    userAnswers,
     selectedId,
     onSelect,
     onSubmit,
@@ -37,7 +37,7 @@ const ExamSidebar = ({
         <Divider />
         <List>
             {questions.map((q) => {
-                const answer = answers[q.id];
+                const answer = userAnswers[q.id];
                 const isAnswered =
                     q.type === "multiSelect"
                         ? Array.isArray(answer) && answer.length > 0
