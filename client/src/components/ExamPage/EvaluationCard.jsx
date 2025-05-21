@@ -1,7 +1,3 @@
-import {
-    Typography,
-    Divider,
-} from "@mui/material";
 import AnswersReview from "./AnswersReview";
 
 const EvaluationCard = ({ index, evaluation, question, userAnswer }) => {

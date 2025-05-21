@@ -1,15 +1,3 @@
-import {
-    Box,
-    TextField,
-    FormControl,
-    FormControlLabel,
-    RadioGroup,
-    Radio,
-    FormGroup,
-    Checkbox,
-    Typography,
-} from "@mui/material";
-
 const AnswersReview = ({ question, answer, showCorrect = true }) => {
     const correctAnswers = question.answers ?? [];
 

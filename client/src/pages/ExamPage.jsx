@@ -8,12 +8,6 @@ import { getCourseById } from "../api/course/courseAPI";
 import { getExamByCourseId } from "../api/exam/examAPI";
 import { generateExamQuestion, addExamWithAnswers } from "../api/exam/examContentAPI";
 
-import {
-    Toolbar,
-    Typography,
-    CssBaseline,
-} from "@mui/material";
-
 const ExamPage = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
