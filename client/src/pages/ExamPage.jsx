@@ -1,38 +1,46 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getExamByCourseId } from "../api/exam/examAPI";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 import ExamSidebar from "../components/ExamPage/ExamSidebar";
 import QuestionContent from "../components/ExamPage/QuestionContent";
-
-import {
-    Box,
-    AppBar,
-    Toolbar,
-    Typography,
-    CssBaseline,
-    CircularProgress,
-} from "@mui/material";
+import { getContentByCourseId } from "../api/content/contentAPI";
+import { getCourseById } from "../api/course/courseAPI";
+import { getExamByCourseId } from "../api/exam/examAPI";
+import { generateExamQuestion, addExamWithAnswers } from "../api/exam/examContentAPI";
 
 const ExamPage = () => {
     const { courseId } = useParams();
+    const navigate = useNavigate();
+    const hasFetchedRef = useRef(false);
 
     const [exam, setExam] = useState(null);
+    const [course, setCourse] = useState(null);
+    const [userAnswers, setUserAnswers] = useState({});
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
-    const [answers, setAnswers] = useState({});
+
 
     useEffect(() => {
         const fetchExam = async () => {
+            if (hasFetchedRef.current) return;
+            hasFetchedRef.current = true;
+
             setLoading(true);
             try {
-                const raw = await getExamByCourseId(courseId);
-                const data = Array.isArray(raw) ? raw[0] : raw;
-                if (!data?.questions || !Array.isArray(data.questions)) {
-                    throw new Error("Invalid exam data");
+                const { examSchema, courseData, topics } = await loadData(courseId);
+                setCourse(courseData);
+
+                const generated_questions = await generateExamQuestions(examSchema, courseData, topics);
+
+                if (generated_questions?.questions?.length > 0) {
+                    setExam(generated_questions);
+                    setSelectedId(generated_questions.questions[0]?.id || null);
+                } else {
+                    throw new Error("No questions generated.");
                 }
-                setExam(data);
-                setSelectedId(data.questions[0]?.id ?? null);
+
             } catch (err) {
                 console.error(`Error loading exam ${courseId}:`, err);
                 setError("Failed to load exam.");
@@ -49,42 +57,74 @@ const ExamPage = () => {
         }
     }, [courseId]);
 
-    const handleChange = (id, value) => {
-        setAnswers((prev) => ({ ...prev, [id]: value }));
+    const loadData = async (courseId) => {
+        try {
+            const examSchema = await getExamByCourseId(courseId);
+            const courseData = await getCourseById(courseId);
+            const topics = await getContentByCourseId(courseId);
+            return { examSchema, courseData, topics };
+        } catch (err) {
+            throw new Error("Failed to load data");
+        }
     };
 
-    const handleSubmit = () => {
-        console.log("Submitted answers:", answers);
-        // TODO siusti atsakymus i srv
+    const generateExamQuestions = async (examSchema, course, topics) => {
+        const generated_questions = await generateExamQuestion({
+            topics: topics,
+            level: course.difficulty,
+            questions_schema: examSchema.questions_schema,
+        });
+
+        if (!generated_questions || !generated_questions.questions) {
+            throw new Error("Invalid exam data or missing questions.");
+        }
+
+        return generated_questions;
+    };
+    const handleChange = (id, value) => {
+        setUserAnswers((prev) => ({ ...prev, [id]: value }));
+    };
+
+
+    const handleSubmit = async () => {
+        const examItem = {
+            courseId: courseId,
+            userId: null,
+            topic: course.title,
+            questions: exam.questions,
+            user_answers: userAnswers,
+        }
+
+        try {
+            await addExamWithAnswers(examItem);
+            console.log("Exam saved successfully");
+            navigate(`/courses/${courseId}/examResults`,
+                {
+                    state: {
+                        questions: exam.questions,
+                        user_answers: userAnswers
+                    }
+                }
+            );
+        } catch (err) {
+            setError(err.message || "Failed to save exam");
+            console.error("Exam saving error:", err);
+            setLoading(false);
+        }
     };
 
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        );
-    }
+            <div className="flex flex-col items-center justify-center h-screen space-y-6 bg-white">
 
-    if (error) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                }}
-            >
-                <Typography color="error">{error}</Typography>
-            </Box>
+                <div className="w-10 h-10 border-4 border-gray-500 border-t-transparent rounded-full animate-spin" />
+
+                <p className="text-lg font-semibold text-gray-700 text-center">
+                    Preparing your exam... This won't take long!
+                </p>
+            </div>
+
+
         );
     }
 
@@ -92,50 +132,33 @@ const ExamPage = () => {
         exam.questions.find((q) => q.id === selectedId) ?? null;
 
     return (
-        <Box sx={{ display: "flex", height: "100vh" }}>
-            <CssBaseline />
-            <AppBar
-                position="fixed"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" noWrap>
-                        {exam.topic}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <ExamSidebar
-                questions={exam.questions}
-                answers={answers}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-                onSubmit={handleSubmit}
-            />
-
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    bgcolor: "background.paper",
-                    p: 4,
-                    overflow: "auto",
-                }}
-            >
-                <Toolbar />
+        <div className="flex flex-row-reverse h-screen bg-white font-sans">\
+            <div className="navbar bg-base-200 fixed h-18 top-0 z-70 px-4">
+                <label className="text-gray-900 font-semibold text-xl">
+                    {course?.title} Exam
+                </label>
+            </div>
+                <ExamSidebar
+                    questions={exam.questions}
+                    userAnswers={userAnswers}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                    onSubmit={handleSubmit}
+                />
+            <div className="flex-grow p-4 mx:auto pt-18">
                 {selectedQuestion ? (
                     <QuestionContent
                         question={selectedQuestion}
-                        answer={answers[selectedQuestion.id]}
+                        answer={userAnswers[selectedQuestion.id]}
                         onChange={handleChange}
                     />
                 ) : (
-                    <Typography variant="body1">
+                    <div variant="body1">
                         Please select a question.
-                    </Typography>
+                    </div>
                 )}
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

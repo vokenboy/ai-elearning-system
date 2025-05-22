@@ -8,5 +8,6 @@ class EvaluateRequest(BaseModel):
 class EvaluateResponse(BaseModel):
     evaluation: List[dict]
     final_score: float
+    total_points: int
     improvements: str
     topic_correctness: List[dict]

@@ -1,80 +1,78 @@
-import {
-    Drawer,
-    Toolbar,
-    Divider,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    Box,
-    Button,
-    ListItemText,
-} from "@mui/material";
-import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
-import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
-
-const drawerWidth = 240;
-
 const ExamSidebar = ({
     questions,
-    answers,
+    userAnswers,
     selectedId,
     onSelect,
     onSubmit,
 }) => (
-    <Drawer
-        variant="permanent"
-        sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: {
-                width: drawerWidth,
-                boxSizing: "border-box",
-            },
-        }}
-    >
-        <Toolbar />
-        <Divider />
-        <List>
-            {questions.map((q) => {
-                const answer = answers[q.id];
-                const isAnswered =
-                    q.type === "multiSelect"
-                        ? Array.isArray(answer) && answer.length > 0
-                        : Boolean(answer && answer.toString().trim() !== "");
+    <div className="flex flex-col w-60 p-2 px-5 h-screen bg-white shadow-lg flex-shrink-0">
+        <div className="h-20" />
+        <nav className="flex-1 pt-1 overflow-y-auto ">
+            <ul className="space-y-1">
+                {questions.map((q) => {
+                    const answer = userAnswers[q.id];
 
-                return (
-                    <ListItem key={q.id} disablePadding>
-                        <ListItemButton
-                            selected={q.id === selectedId}
-                            onClick={() => onSelect(q.id)}
-                        >
-                            <ListItemText primary={`Question ${q.id}`} />
-                            <ListItemIcon sx={{ minWidth: 0, ml: 1 }}>
+                    const isSelected = q.id === selectedId;
+                    const isAnswered =
+                        q.type === "multiSelect"
+                            ? Array.isArray(answer) && answer.length > 0
+                            : Boolean(answer && answer.toString().trim() !== "");
+
+                    return (
+                        <li key={q.id}>
+                            <button
+                                onClick={() => onSelect(q.id)}
+                                className={`flex items-center justify-left w-full px-2 py-2 rounded-md border text-left transition
+                                        ${isSelected
+                                        ? "bg-base-200 font-semibold text-base-content border-base-300"
+                                        : "bg-base-100 hover:bg-base-200 text-base-content border-base-200"
+                                    }`}
+                            >
+
                                 {isAnswered ? (
-                                    <CheckBoxOutlinedIcon
-                                        fontSize="small"
-                                        color="success"
-                                    />
+                                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary">
+                                        <svg
+                                            className="w-4 h-4 text-primary-content"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M5 13l4 4L19 7"
+                                            />
+                                        </svg>
+                                    </span>
                                 ) : (
-                                    <IndeterminateCheckBoxOutlinedIcon
-                                        fontSize="small"
-                                        color="disabled"
-                                    />
+                                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-base-300">
+                                        <svg
+                                            className="w-4 h-4 text-secondary-content"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        />
+                                    </span>
                                 )}
-                            </ListItemIcon>
-                        </ListItemButton>
-                    </ListItem>
-                );
-            })}
-        </List>
+                                <span className="px-2">
+                                    Question {q.id}
+                                </span>
+                            </button>
+                        </li>
+                    );
+                })}
+            </ul>
+        </nav>
 
-        <Box sx={{ p: 2 }}>
-            <Button variant="contained" fullWidth onClick={onSubmit}>
+        <div className="p-4">
+            <button
+                onClick={onSubmit}
+                className="w-full bg-teal-100 font-bold text-primary-content py-2 border border-primary rounded-lg hover:transition hover:bg-primary"
+            >
                 Submit
-            </Button>
-        </Box>
-    </Drawer>
+            </button>
+        </div>
+    </div>
 );
 
 export default ExamSidebar;

@@ -10,6 +10,7 @@ import CoursesPage from "./pages/CoursesPage";
 import CourseContentPage from "./pages/CourseContentPage";
 import TaskPage from "./pages/TaskPage";
 import ExamPage from "./pages/ExamPage";
+import ExamFeedbackPage from "./pages/ExamFeedback";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
 import UserProfile from "./pages/UserProfile";
@@ -22,6 +23,10 @@ function App() {
                     <Route
                         path="/courses/:courseId/exam"
                         element={<ExamPage />}
+                    />
+                    <Route
+                        path="/courses/:courseId/examResults"
+                        element={<ExamFeedbackPage />}
                     />
                 </Routes>
 

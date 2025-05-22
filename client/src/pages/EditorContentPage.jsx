@@ -18,10 +18,13 @@ import {
     deleteTopicById,
 } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
+import ExamCreateDialog from "../components/ExamPage/ExamCreate";
 
 const EditorContentPage = () => {
     const [openCreateDialog, setOpenCreateDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openExamCreateDialog, setOpenExamCreateDialog] = useState(false);
+
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState(null);
@@ -78,7 +81,18 @@ const EditorContentPage = () => {
             clearMessages();
         }
     };
+    const handleOpenExamCreateDialog = () => {
+        setOpenExamCreateDialog(true);
+    };
 
+    const handleCloseExamCreateDialog = (refresh = false) => {
+        setOpenExamCreateDialog(false);
+        if (refresh) {
+            fetchCourseTopics();
+            setSuccess("Content topic successfully created!");
+            clearMessages();
+        }
+    };
     const handleOpenEditDialog = (topic) => {
         setSelectedTopic(topic);
         setOpenEditDialog(true);
@@ -122,34 +136,34 @@ const EditorContentPage = () => {
     };
 
     const CourseHeader = () => (
-        <Box
-            sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-                flexWrap: { xs: "wrap", sm: "nowrap" },
-                gap: 2,
-            }}
+        <div className="flex justify-between items-center flex-wrap sm:flex-nowrap gap-4 mb-6">
+    <div>
+        <h1 className="text-2xl font-bold mb-1">
+            {courseDetails?.title || "Course Content"}
+        </h1>
+        {courseDetails && (
+            <p className="text-gray-600 mb-2">{courseDetails.description}</p>
+        )}
+        <button
+            onClick={handleOpenCreateDialog}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-base text-sm font-medium rounded-md hover:bg-teal-400 transition"
         >
-            <Box>
-                <Typography variant="h4" gutterBottom>
-                    {courseDetails?.title || "Course Content"}
-                </Typography>
-                {courseDetails && (
-                    <Typography variant="subtitle1" color="text.secondary">
-                        {courseDetails.description}
-                    </Typography>
-                )}
-            </Box>
-            <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={handleOpenCreateDialog}
-            >
-                Add Topic
-            </Button>
-        </Box>
+            <AddIcon className="w-5 h-5" />
+            Add Topic
+        </button>
+    </div>
+
+    <div className="flex justify-end">
+        <button
+            onClick={handleOpenExamCreateDialog}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 transition"
+        >
+            <AddIcon className="w-5 h-5" />
+            Add Exam Schema
+        </button>
+    </div>
+</div>
+
     );
 
     return (
@@ -190,7 +204,11 @@ const EditorContentPage = () => {
                 onClose={handleCloseCreateDialog}
                 courseId={courseId}
             />
-
+            <ExamCreateDialog
+                open={openExamCreateDialog}
+                onClose={handleCloseExamCreateDialog}
+                courseId={courseId}
+            />
             {selectedTopic && (
                 <ContentEdit
                     open={openEditDialog}

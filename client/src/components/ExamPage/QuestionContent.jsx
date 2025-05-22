@@ -1,84 +1,89 @@
-import {
-    Box,
-    Typography,
-    TextField,
-    FormControl,
-    FormControlLabel,
-    RadioGroup,
-    Radio,
-    FormGroup,
-    Checkbox,
-    Button,
-} from "@mui/material";
 
 const QuestionContent = ({
     question,
-    answer = question.type === "multiSelect" ? [] : "",
+    answer = question.question_type === "multiple select" ? [] : "",
     onChange,
 }) => {
     const renderInput = () => {
-        switch (question.type) {
+        switch (question.question_type) {
             case "open":
                 return (
-                    <TextField
-                        fullWidth
-                        multiline
-                        minRows={4}
-                        placeholder="Type your answer here..."
-                        value={answer}
-                        onChange={(e) => onChange(question.id, e.target.value)}
-                        sx={{ mt: 2 }}
-                    />
+                    <div className="pt-6">
+                        <input
+                            type="text"
+                            id="answer"
+                            value={answer}
+                            onChange={(e) => onChange(question.id, e.target.value)}
+                            className="h-20 border border-gray-300 text-teal-900 text-base rounded-lg w-full p-4 focus:outline-none focus:ring-2 focus:ring-teal-300"
+                            placeholder="Type your answer here..."
+                        />
+                    </div>
                 );
-            case "singleSelect":
+            case "single select":
                 return (
-                    <Box sx={{ mt: 2 }}>
-                        <FormControl component="fieldset">
-                            <RadioGroup
-                                value={answer}
-                                onChange={(e) =>
-                                    onChange(question.id, e.target.value)
-                                }
-                            >
-                                {question.options.map((opt, idx) => (
-                                    <FormControlLabel
-                                        key={idx}
-                                        value={opt}
-                                        control={<Radio />}
-                                        label={opt}
-                                        sx={{ mb: 1 }}
-                                    />
-                                ))}
-                            </RadioGroup>
-                        </FormControl>
-                    </Box>
-                );
-            case "multiSelect":
-                return (
-                    <Box sx={{ mt: 2 }}>
-                        <FormGroup>
-                            {question.options.map((opt, idx) => (
-                                <FormControlLabel
+                    <div className="grid gap-4 mt-4 mb-4">
+                        {question.options.map((opt, idx) => {
+                            const selected = answer === opt;
+                            return (
+                                <label
                                     key={idx}
-                                    control={
-                                        <Checkbox
-                                            checked={answer.includes(opt)}
-                                            onChange={(e) => {
-                                                const newVals = e.target.checked
-                                                    ? [...answer, opt]
-                                                    : answer.filter(
-                                                          (v) => v !== opt
-                                                      );
-                                                onChange(question.id, newVals);
-                                            }}
-                                        />
-                                    }
-                                    label={opt}
-                                    sx={{ mb: 1 }}
-                                />
-                            ))}
-                        </FormGroup>
-                    </Box>
+                                    htmlFor={`option-${question.id}-${idx}`}
+                                    className={`block p-4 border rounded-xl cursor-pointer text-base transition-all
+                                            ${selected ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-gray-300 hover:border-gray-400'}`}
+                                >
+                                    <input
+                                        type="radio"
+                                        id={`option-${question.id}-${idx}`}
+                                        name={`question-${question.id}`}
+                                        value={opt}
+                                        checked={selected}
+                                        onChange={(e) => onChange(question.id, e.target.value)}
+                                        className="hidden"
+                                    />
+                                    {opt}
+                                </label>
+                            );
+                        })}
+                    </div>
+                );
+            case "multiple select":
+                return (
+                    <div className="grid gap-4 mb-4">
+                        <p className="text-sm text-gray-500 italic mt-2">
+                            Select multiple options
+                        </p>
+                        {question.options.map((opt, idx) => {
+                            const selected = answer.includes(opt);
+                            return (
+                                <label
+                                    key={idx}
+                                    htmlFor={`option-${question.id}-${idx}`}
+                                    className={`block p-4 border rounded-xl cursor-pointer text-base transition-all
+                                            ${answer.includes(opt) ? 'border-teal-500 bg-teal-50' : 'border-gray-300 hover:border-gray-400'}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        id={`option-${question.id}-${idx}`}
+                                        name={`question-${question.id}`}
+                                        value={opt}
+                                        checked={selected}
+                                        onChange={(e) => {
+                                            const newVals = e.target.checked
+                                                ? [...answer, opt]
+                                                : answer.filter(
+                                                    (v) => v !== opt
+                                                );
+                                            onChange(question.id, newVals);
+                                        }}
+                                        className="hidden"
+                                    />
+                                    <span className="text-teal-800 text-base">
+                                        {opt}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
                 );
             default:
                 return null;
@@ -86,39 +91,33 @@ const QuestionContent = ({
     };
 
     return (
-        <Box sx={{ maxWidth: 800, mx: "auto" }}>
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                }}
-            >
-                <Typography variant="h5" gutterBottom>
+        <div className="flex flex-col max-w-4xl mx-auto mt-6 bg-white rounded-xl p-6 shadow-lg">
+            <div className="flex flex-row justify-between items-baseline border-b pb-4 mb-4">
+                <p className="text-lg text-xl font-semibold">
+
                     Question {question.id}
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary">
+                </p>
+                <p className="text-teal-500 text-sm ">
                     Points: {question.score}
-                </Typography>
-            </Box>
-            <Typography variant="body1" sx={{ mt: 1, mb: 3 }}>
-                {question.text}
-            </Typography>
+                </p>
+            </div>
+            <p className="text-lg font-medium text-base font-normal">
+                {question.question}
+            </p>
 
             {renderInput()}
 
-            {question.type === "singleSelect" && (
-                <Box sx={{ mt: 1 }}>
-                    <Button
-                        variant="outlined"
-                        size="small"
+            {question.question_type === "single select" && (
+                <div className="mx-auto">
+                    <button
+                        className="btn btn-sm justify-start w-full text-left"
                         onClick={() => onChange(question.id, "")}
                     >
                         Clear Selection
-                    </Button>
-                </Box>
+                    </button>
+                </div>
             )}
-        </Box>
+        </div>
     );
 };
 
