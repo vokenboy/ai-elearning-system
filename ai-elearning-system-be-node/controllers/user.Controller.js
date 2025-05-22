@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user.Model");
-const SolutionContent = require("../models/solutionContent.Model");
+const SolutionContent = require("../models/solution.Model");
 
 exports.registerUser = async (req, res) => {
     try {
@@ -70,8 +70,12 @@ exports.loginUser = async (req, res) => {
         res.status(200).json({
             message: "Login successful",
             token,
-            user: { id: user._id, name: user.name, email: user.email, role: user.role },
-
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
         });
     } catch (error) {
         console.error("Error during login:", error);
@@ -79,40 +83,39 @@ exports.loginUser = async (req, res) => {
     }
 };
 exports.getCurrentUser = async (req, res) => {
-  try {
-    console.log(req.user); 
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    try {
+        console.log(req.user);
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error("Error fetching current user:", err);
+        res.status(500).json({ error: "Server error" });
     }
-    res.json(user);
-  } catch (err) {
-    console.error("Error fetching current user:", err);
-    res.status(500).json({ error: "Server error" });
-  }
 };
 
 exports.updateCurrentUser = async (req, res) => {
-  try {
-    const { name, email, role } = req.body;
+    try {
+        const { name, email, role } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { name, email, role },
-      { new: true, runValidators: true }
-    ).select("-password");
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { name, email, role },
+            { new: true, runValidators: true }
+        ).select("-password");
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: "Server error" });
     }
-
-    res.json(updatedUser);
-  } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ error: "Server error" });
-  }
 };
-
 
 exports.fetchUserCourses = async (req, res) => {
     try {
@@ -121,13 +124,13 @@ exports.fetchUserCourses = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const existingUser = await User.findOne({ "_id": userId });
+        const existingUser = await User.findOne({ _id: userId });
         if (existingUser) {
-            courses = existingUser.courses
-            if(!courses){
+            courses = existingUser.courses;
+            if (!courses) {
                 return res.status(404).json({ error: "Courses not found" });
             }
-            res.json(courses)
+            res.json(courses);
         }
     } catch (error) {
         console.error("Error fetching user courses:", error);
@@ -144,7 +147,9 @@ exports.fetchUserSolutions = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const existingSolutions = await SolutionContent.find({ "userId": user.id });
+        const existingSolutions = await SolutionContent.find({
+            userId: user.id,
+        });
         if (!existingSolutions) {
             return res.status(404).json({ error: "Solutions not found" });
         }
@@ -165,22 +170,23 @@ exports.enrollUserToCourse = async (req, res) => {
                 .json({ error: "Provide userId and courseId" });
         }
 
-        const existingUser = await User.findOne({ "_id": userId });
+        const existingUser = await User.findOne({ _id: userId });
         if (existingUser) {
-            courses = existingUser.courses
-            if(!courses.includes(courseId)){
+            courses = existingUser.courses;
+            if (!courses.includes(courseId)) {
                 courses.push(courseId);
             }
             const updatedUser = await User.findByIdAndUpdate(
                 userId,
-                {courses},
-                {new: true}
+                { courses },
+                { new: true }
             );
+        } else {
+            return res
+                .status(404)
+                .json({ error: "User not found. Please login." });
         }
-        else {
-            return res.status(404).json({error: "User not found. Please login."});
-        }
-        res.status(200).json({message: "User enrolled successfully"});
+        res.status(200).json({ message: "User enrolled successfully" });
     } catch (error) {
         console.error("Error enrolling user:", error);
         res.status(500).json({ error: "Server error" });
@@ -188,9 +194,9 @@ exports.enrollUserToCourse = async (req, res) => {
 };
 
 const getUserFromToken = (token) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    throw new Error("Invalid or expired token");
-  }
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        throw new Error("Invalid or expired token");
+    }
 };

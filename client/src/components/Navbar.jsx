@@ -129,9 +129,20 @@ const Navbar = () => {
                     </svg>
                 </label>
                 {authenticated ? (
-                    <button onClick={handleLogout} className="btn btn-ghost">
-                        Logout
-                    </button>
+                    <>
+                        <button
+                            onClick={() => navigate("/profile")}
+                            className="btn btn-ghost"
+                        >
+                            Profile
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="btn btn-ghost"
+                        >
+                            Logout
+                        </button>
+                    </>
                 ) : (
                     <>
                         <Link to="/login" className="btn btn-ghost mr-2">

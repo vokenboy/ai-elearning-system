@@ -15,7 +15,7 @@ const CourseCard = ({ course, isEnrolled, onEnroll, onView }) => {
                     </p>
                     <p>
                         <span className="font-semibold">Created at:</span>{" "}
-                        {new Date(course.createdAt).toLocaleDateString()}
+                        {new Date(course.createdAt).toLocaleDateString("lt-LT")}
                     </p>
                 </div>
 

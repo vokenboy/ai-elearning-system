@@ -12,6 +12,7 @@ import TaskPage from "./pages/TaskPage";
 import ExamPage from "./pages/ExamPage";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/courses" element={<CoursesPage />} />
+                        <Route path="/profile" element={<UserProfile />} />
                         <Route
                             path="/courses/:courseId/content"
                             element={<CourseContentPage />}

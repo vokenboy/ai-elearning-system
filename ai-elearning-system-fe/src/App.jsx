@@ -10,6 +10,7 @@ import TaskInterface from "./pages/TaskInterface";
 import PrivateRoute from "./components/PrivateRoute";
 import EditorCoursePage from "./pages/EditorCoursePage";
 import EditorContentPage from "./pages/EditorContentPage";
+import UserProfile from "./components/UserProfile";
 import Exam from "./pages/Exam";
 import ExamFeedback from "./pages/ExamFeedback";
 
@@ -46,7 +47,10 @@ function App() {
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/courses" element={<CourseView />} />
-                            <Route path="/api/users/me" element={<UserProfile />} />
+                            <Route
+                                path="/api/users/me"
+                                element={<UserProfile />}
+                            />
 
                             <Route
                                 path="/courses/:courseId/content"
