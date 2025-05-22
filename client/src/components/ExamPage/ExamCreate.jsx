@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import { addExamSchema } from "../api/exam/examAPI";
-import { getContentByCourseId } from "../api/content/contentAPI";
-import { getCourseById } from "../api/course/courseAPI";
+import { addExamSchema } from "../../api/exam/examAPI";
+import { getContentByCourseId } from "../../api/content/contentAPI";
+import { getCourseById } from "../../api/course/courseAPI";
 
 const QUESTION_TYPES = ["open", "single select", "multiple select"];
 
@@ -111,124 +111,118 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
     };
 
     return (
-        <Dialog
-            open={open}
-            onClose={() => onClose(false)}
-            fullWidth
-            maxWidth="lg"
-        >
-            <DialogTitle>
-                <Typography>Add Exam Schema</Typography>
-            </DialogTitle>
+        open && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/50 transition-opacity">
+                <div className="w-full max-w-6xl bg-white rounded-lg shadow-xl overflow-hidden">
+                    <div className="border-b px-6 py-4">
+                        <h2 className="text-lg font-semibold">Add Exam Schema</h2>
+                    </div>
 
-            <DialogContent dividers>
-                {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        {error}
-                    </Alert>
-                )}
-                {success && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                        {success}
-                    </Alert>
-                )}
+                    <div className="p-6 max-h-[75vh] overflow-y-auto space-y-4">
+                        {error && (
+                            <div className="bg-red-100 text-red-700 p-3 rounded-md">
+                                {error}
+                            </div>
+                        )}
+                        {success && (
+                            <div className="bg-green-100 text-green-700 p-3 rounded-md">
+                                {success}
+                            </div>
+                        )}
 
-                {formData.map((data, index) => (
-                    <Box
-                        key={index}
-                        sx={{
-                            display: "flex",
-                            flexDirection: { xs: "column", md: "row" },
-                            gap: 2,
-                        }}
-                    >
-                        <FormControl
-                            fullWidth
-                            margin="normal"
-                            disabled={loading}
-                        >
-                            <InputLabel>Course topic</InputLabel>
-                            <Select
-                                name="topic"
-                                value={data.topic}
-                                onChange={(e) => handleChange(index, e)}
-                                label="Course topic"
+                        {formData.map((data, index) => (
+                            <div
+                                key={index}
+                                className="flex flex-col md:flex-row gap-4 items-start"
                             >
-                                {topics.map((topic) => (
-                                    <MenuItem key={topic.topic} value={topic.topic}>
-                                        {topic.topic}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl
-                            fullWidth
-                            margin="normal"
-                            disabled={loading}
-                        >
-                            <InputLabel>Question type</InputLabel>
-                            <Select
-                                name="type"
-                                value={data.type}
-                                onChange={(e) => handleChange(index, e)}
-                                label="Question type"
-                            >
-                                {QUESTION_TYPES.map((type) => (
-                                    <MenuItem key={type} value={type}>
-                                        {type}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl
-                            margin="normal"
-                            disabled={loading}
-                        >
-                            <TextField
-                                name="score"
-                                label="Score"
-                                type="number"
-                                variant="outlined"
-                                required
-                                value={data.score}
-                                onChange={(e) => handleChange(index, e)}
-                                disabled={loading}
-                            />
-                        </FormControl>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-                            <IconButton
-                                onClick={() => handleRemoveFields(index)}
-                                disabled={data.length <= 1}
-                            >
-                                <RemoveIcon />
-                            </IconButton>
-                            <IconButton onClick={handleAddFields}>
-                                <AddIcon />
-                            </IconButton>
-                        </Box>
-                    </Box>
-                ))}
-            </DialogContent>
-            <DialogActions sx={{ p: 2 }}>
-                <Button
-                    onClick={() => onClose(false)}
-                    variant="outlined"
-                    color="inherit"
-                    disabled={loading}
-                >
-                    Cancel
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    startIcon={loading && <CircularProgress size={20} />}
-                >
-                    {loading ? "Saving..." : "Save Exam Schema"}
-                </Button>
-            </DialogActions>
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium mb-1">
+                                        Course topic
+                                    </label>
+                                    <select
+                                        name="topic"
+                                        value={data.topic}
+                                        onChange={(e) => handleChange(index, e)}
+                                        disabled={loading}
+                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 hover:ring-2 hover:ring-gray-400 hover:outline-none"
+                                    >
+                                        {topics.map((topic) => (
+                                            <option key={topic.topic} value={topic.topic}>
+                                                {topic.topic}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium mb-1">
+                                        Question type
+                                    </label>
+                                    <select
+                                        name="topic"
+                                        value={data.topic}
+                                        onChange={(e) => handleChange(index, e)}
+                                        disabled={loading}
+                                        className="w-full border border-gray-300 rounded-lg px-3 py-2 hover:ring-2 hover:ring-gray-400 hover:outline-none"
+                                    >
+                                        {QUESTION_TYPES.map((type) => (
+                                            <option key={type} value={type}>
+                                                {type}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="w-32">
+                                    <label className="block text-sm font-medium mb-1">Score</label>
 
-        </Dialog>
+                                    <input
+                                        name="score"
+                                        type="number"
+                                        value={data.score}
+                                        onChange={(e) => handleChange(index, e)}
+                                        disabled={loading}
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2 mt-6 md:mt-5">
+                                    <button
+                                        type="button"
+                                        disabled={data.length <= 1}
+                                        onClick={() => handleRemoveFields(index)}
+                                        className="p-2 text-gray-600 hover:text-red-600 disabled:opacity-50"
+                                    >
+                                        <RemoveIcon />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleAddFields}
+                                        className="p-2 text-gray-600 hover:text-teal-600"
+                                    >
+                                        <AddIcon />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-end gap-3 px-6 py-4 border-t">
+                        <button
+                            onClick={() => onClose(false)}
+                            disabled={loading}
+                            className="px-4 py-2 border border-gray-400 rounded-md text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="px-4 py-2 bg-primary text-base rounded-md hover:bg-teal-400 disabled:opacity-50 flex items-center gap-2"
+                        >
+                            {loading && <CircularProgress size={20} className="text-white" />}
+                            {loading ? "Saving..." : "Save Exam Schema"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
     );
 };
 
