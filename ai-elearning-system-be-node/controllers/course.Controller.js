@@ -1,7 +1,7 @@
 const Course = require("../models/course.Model");
 const PDFDocument = require("pdfkit");
-const fs = require('fs');
-const os = require('os');
+const fs = require("fs");
+const os = require("os");
 const { randomUUID } = require("crypto");
 const User = require("../models/user.Model");
 
@@ -13,8 +13,6 @@ exports.getAllCourses = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
-
-
 
 exports.saveCourse = async (req, res) => {
     try {
@@ -54,45 +52,47 @@ exports.deleteCourse = async (req, res) => {
 
 //kurso redagavimas
 exports.updateCourse = async (req, res) => {
-    try{
-        const {id} = req.params;
-        const {title, description, difficulty} = req.body;
+    try {
+        const { id } = req.params;
+        const { title, description, difficulty } = req.body;
 
-        if (!title || !description || !difficulty){
-            return res.status(400).json({error: "Please provide all required fields"});
+        if (!title || !description || !difficulty) {
+            return res
+                .status(400)
+                .json({ error: "Please provide all required fields" });
         }
 
         //atnaujina kursa pagal id
         const updatedCourse = await Course.findByIdAndUpdate(
             id,
-            {title, description, difficulty},
-            {new: true}
+            { title, description, difficulty },
+            { new: true }
         );
 
-        if (!updatedCourse){
-            return res.status(404).json({error: "Course not found"});
-
+        if (!updatedCourse) {
+            return res.status(404).json({ error: "Course not found" });
         }
-        res.status(200).json({message: "Course updated successfully", course: updatedCourse});
-    }
-    catch (error){
+        res.status(200).json({
+            message: "Course updated successfully",
+            course: updatedCourse,
+        });
+    } catch (error) {
         console.error("Error updating course:", error);
-        res.status(500).json({error: "Server error"});
+        res.status(500).json({ error: "Server error" });
     }
-
 };
 
 // gauti kursa pagal id
 exports.getCourseById = async (req, res) => {
     try {
         const { id } = req.params;
-        const course = await Course.findById(id); 
+        const course = await Course.findById(id);
 
         if (!course) {
             return res.status(404).json({ error: "Course not found" });
         }
 
-        res.json(course); 
+        res.json(course);
     } catch (error) {
         console.error("Error getting course:", error);
         res.status(500).json({ error: "Server error" });
@@ -103,41 +103,68 @@ exports.getCourseCertificate = async (req, res) => {
     try {
         const { id } = req.params;
         const course = await Course.findById(id);
-
         if (!course) {
             return res.status(404).json({ error: "Course not found" });
         }
 
-        const certificateDocument = new PDFDocument();
-        const pHeight = certificateDocument.page.height;
-        const pWidth = certificateDocument.page.width;
-        const certificateDocumentName = course.title + randomUUID();
-        const certificateDocumentDestination = os.tmpdir() + '\\' + certificateDocumentName + '.pdf';
-        const certificateCompletionDate = new Date().toISOString().split('T')[0];
+        const certificateFilename = `${course.title.replace(
+            /\s+/g,
+            "_"
+        )}_${randomUUID()}.pdf`;
+        const completionDate = new Date().toISOString().split("T")[0];
 
-        certificateDocument.pipe(fs.createWriteStream(certificateDocumentDestination));
-        certificateDocument.image('./resources/texture.jpg',0,0,{width: pWidth, height: pHeight});
-        certificateDocument.image('./resources/CertificateLogo.png',pWidth/2-200, 10, {width: 400});
-        certificateDocument.image('./resources/border.png',0,0,{width: pWidth, height: pHeight});
-        certificateDocument.moveDown(20);
-        certificateDocument.fontSize(24);
-        certificateDocument.font(`Helvetica-Bold`)
-        .text(`OFFICIAL LECON CERTIFICATE OF COMPLETION`, { align: 'center', valign: 'center'});
-        certificateDocument.moveDown(3);
-        certificateDocument.fontSize(15);
-        certificateDocument.font('Helvetica');
-        certificateDocument.text(`For completing Lecon's '${course.title}' course`, { align: 'center', valign: 'center'});
-        certificateDocument.text(`During the course, the student acquired theoretical knowledge and practical programming skills.`, { align: 'center', valign: 'center'});
-        certificateDocument.moveDown(7);
-        certificateDocument.fontSize(9);
-        certificateDocument.text(`Course difficulty: ${course.difficulty}`, { align: 'center'});
-        certificateDocument.text(`Completed at: ${certificateCompletionDate}`, { align: 'center'});
-        certificateDocument.text(`Certificate provided by: Lecon`, { align: 'center'});
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${certificateFilename}"`
+        );
 
-        certificateDocument.end();
-        res.status(200).json({certificatePath: certificateDocumentDestination});
+        const doc = new PDFDocument({ size: "A4", margin: 50 });
+        doc.pipe(res);
+
+        const { width: pWidth, height: pHeight } = doc.page;
+        doc.image("./resources/texture.jpg", 0, 0, {
+            width: pWidth,
+            height: pHeight,
+        });
+        doc.image("./resources/CertificateLogo.png", pWidth / 2 - 200, 10, {
+            width: 400,
+        });
+        doc.image("./resources/border.png", 0, 0, {
+            width: pWidth,
+            height: pHeight,
+        });
+
+        doc.moveDown(20)
+            .fontSize(24)
+            .font("Helvetica-Bold")
+            .text("OFFICIAL LECON CERTIFICATE OF COMPLETION", {
+                align: "center",
+                valign: "center",
+            })
+            .moveDown(3)
+            .fontSize(15)
+            .font("Helvetica")
+            .text(`For completing Lecon's '${course.title}' course`, {
+                align: "center",
+            })
+            .text(
+                "During the course, the student acquired theoretical knowledge and practical programming skills.",
+                { align: "center" }
+            )
+            .moveDown(7)
+            .fontSize(9)
+            .text(`Course difficulty: ${course.difficulty}`, {
+                align: "center",
+            })
+            .text(`Completed at: ${completionDate}`, { align: "center" })
+            .text("Certificate provided by: Lecon", { align: "center" });
+
+        doc.end();
     } catch (error) {
-        console.error("Error getting course:", error);
-        res.status(500).json({ error: "Server error" });
+        console.error("Error generating certificate:", error);
+        if (!res.headersSent) {
+            res.status(500).json({ error: "Server error" });
+        }
     }
-}
+};

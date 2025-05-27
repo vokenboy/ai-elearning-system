@@ -2,11 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { evaluateExamAnswers } from "../api/exam/examContentAPI";
-import { getCourseById } from "../api/course/courseAPI";
+import { getCourseById, getCertificate } from "../api/course/courseAPI";
 import EvaluationCard from "../components/ExamPage/EvaluationCard";
 
 const ExamFeedbackPage = () => {
-
     const { courseId } = useParams();
     const location = useLocation();
     const hasFetchedRef = useRef(false);
@@ -18,36 +17,57 @@ const ExamFeedbackPage = () => {
     const [examResults, setExamResults] = useState({});
     const [questions, setQuestions] = useState(null);
     const [userAnswers, setUserAnswers] = useState(null);
+    const [certDownloading, setCertDownloading] = useState(false);
 
     useEffect(() => {
         loadFeedback();
-
     }, []);
 
     const loadFeedback = async () => {
         if (hasFetchedRef.current) return;
         hasFetchedRef.current = true;
 
-        setLoading(true)
+        setLoading(true);
         try {
             const results = await EvaluateExamAnswers();
             const courseData = await getCourseById(courseId);
             setCourse(courseData);
-            setQuestions(location.state.questions)
-            setUserAnswers(location.state.user_answers)
+            setQuestions(location.state.questions);
+            setUserAnswers(location.state.user_answers);
             if (results && results.evaluation?.length > 0) {
-                setExamResults(results)
+                setExamResults(results);
             } else {
                 throw new Error("No exam results generated.");
             }
-
         } catch (err) {
             console.error(`Error returning exam results ${courseId}:`, err);
             setError("Failed to return exam results. Please try again.");
         } finally {
             setLoading(false);
         }
-    }
+    };
+
+    const handleDownloadCertificate = async () => {
+        setCertDownloading(true);
+        try {
+            const blob = await getCertificate(courseId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute(
+                "download",
+                `${course?.title || "certificate"}_certificate.pdf`
+            );
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (downloadError) {
+            console.error("Error downloading certificate:", downloadError);
+        } finally {
+            setCertDownloading(false);
+        }
+    };
 
     const EvaluateExamAnswers = async () => {
         const feedback = await evaluateExamAnswers({
@@ -64,18 +84,18 @@ const ExamFeedbackPage = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-screen space-y-6 bg-white">
-
                 <div className="w-10 h-10 border-4 border-gray-500 border-t-transparent rounded-full animate-spin" />
-
                 <p className="text-lg font-semibold text-gray-700 text-center">
                     Preparing your score...
                 </p>
             </div>
         );
     }
+
     const percentage = examResults?.total_points
         ? (examResults.final_score / examResults.total_points) * 100
         : 0;
+
     return (
         <div className="flex flex-col min-h-screen p-6 pt-26 font-sans">
             <div className="w-full max-w-md mx-auto mt-3">
@@ -85,12 +105,13 @@ const ExamFeedbackPage = () => {
                 <div className="relative h-6 rounded-full bg-base-200 overflow-hidden">
                     <div
                         style={{ width: `${percentage}%` }}
-                        className={`h-full rounded-full transition-all duration-1000 ease-in-out ${percentage < 50
+                        className={`h-full rounded-full transition-all duration-1000 ease-in-out ${
+                            percentage < 50
                                 ? "bg-red-400"
                                 : percentage < 80
-                                    ? "bg-yellow-300"
-                                    : "bg-teal-300"
-                            }`}
+                                ? "bg-yellow-300"
+                                : "bg-teal-300"
+                        }`}
                     />
                     <div className="absolute inset-0 flex items-center justify-center font-bold text-gray-800">
                         {`${examResults?.final_score} / ${examResults?.total_points}`}
@@ -98,10 +119,7 @@ const ExamFeedbackPage = () => {
                 </div>
             </div>
 
-
-            <h2 className="text-md font-bold mb-2 mt-4">
-                Overall feedback:
-            </h2>
+            <h2 className="text-md font-bold mb-2 mt-4">Overall feedback:</h2>
             <div className="max-w-4xl pb-6">
                 <ReactMarkdown>{examResults?.improvements}</ReactMarkdown>
             </div>
@@ -120,7 +138,17 @@ const ExamFeedbackPage = () => {
                     </div>
                 ))}
             </div>
-            <div className="flex justify-end mt-10">
+
+            <div className="flex justify-end mt-10 space-x-4">
+                {percentage >= 80 && (
+                    <button
+                        onClick={handleDownloadCertificate}
+                        disabled={certDownloading}
+                        className="bg-secondary text-base px-6 py-2 rounded-lg hover:bg-pink-300 transition disabled:opacity-50"
+                    >
+                        {certDownloading ? "Downloading..." : "Get Certificate"}
+                    </button>
+                )}
                 <button
                     onClick={() => navigate(`/courses/${courseId}/content`)}
                     className="bg-primary text-base px-6 py-2 rounded-lg hover:bg-teal-600 transition"
@@ -130,6 +158,6 @@ const ExamFeedbackPage = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ExamFeedbackPage;

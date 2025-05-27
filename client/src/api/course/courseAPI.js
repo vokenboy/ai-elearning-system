@@ -5,6 +5,19 @@ const getAuthHeader = () => {
     return token ? `Bearer ${token}` : "";
 };
 
+export const getCertificate = async (courseId) => {
+    const response = await fetch(`${coursesURL}/${courseId}/certificate`, {
+        headers: {
+            Authorization: getAuthHeader(),
+        },
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Failed to fetch certificate");
+    }
+    return await response.blob();
+};
+
 export async function getAllCourses() {
     try {
         const response = await fetch(coursesURL, {
