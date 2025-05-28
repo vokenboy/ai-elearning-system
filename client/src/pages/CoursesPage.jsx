@@ -18,7 +18,6 @@ const CoursesPage = () => {
             try {
                 const coursesData = await getAllCourses();
                 setCourses(coursesData);
-                console.log(coursesData);
             } catch (err) {
                 console.error("Error fetching courses:", err);
             }

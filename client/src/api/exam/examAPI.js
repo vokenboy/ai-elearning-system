@@ -23,7 +23,6 @@ export async function getExamByCourseId(courseId) {
 
 export async function addExamSchema(examSchemaData) {
     try {
-        console.log(examSchemaData)
         const response = await fetch(`${examURL}/addExamSchema`, {
             method: "POST",
             headers: {

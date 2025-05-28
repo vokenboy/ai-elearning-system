@@ -22,7 +22,7 @@ import { addExamSchema } from "../../api/exam/examAPI";
 import { getContentByCourseId } from "../../api/content/contentAPI";
 import { getCourseById } from "../../api/course/courseAPI";
 
-const QUESTION_TYPES = ["open", "single select", "multiple select"];
+const QUESTION_TYPES = ["true/false", "single select", "multiple select"];
 
 const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
     const [formData, setFormData] = useState([

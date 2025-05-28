@@ -24,9 +24,9 @@ export const generateExamQuestion = async (examSchema) => {
     }
 };
 
-export const evaluateExamAnswers = async (answers) => {
+export const getExamFeedback = async (answers) => {
     try {
-        const response = await fetch("http://localhost:8000/evaluate_exam_answers/", {
+        const response = await fetch("http://localhost:8000/provide_exam_feedback/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -35,13 +35,13 @@ export const evaluateExamAnswers = async (answers) => {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to evaluate answers");
+            throw new Error("Failed to provide feedback");
         }
 
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error("Error evaluating answers:", error.message);
+        console.error("Error providing feedback:", error.message);
         throw error;
     }
 };

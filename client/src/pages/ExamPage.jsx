@@ -7,6 +7,7 @@ import { getContentByCourseId } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
 import { getExamByCourseId } from "../api/exam/examAPI";
 import { generateExamQuestion, addExamWithAnswers } from "../api/exam/examContentAPI";
+import { evaluateAnswers } from "../context/examContext";
 
 const ExamPage = () => {
     const { courseId } = useParams();
@@ -37,6 +38,13 @@ const ExamPage = () => {
                 if (generated_questions?.questions?.length > 0) {
                     setExam(generated_questions);
                     setSelectedId(generated_questions.questions[0]?.id || null);
+
+                    const initialAnswers = {};
+                    generated_questions.questions.forEach(q => {
+                        initialAnswers[q.id] = [];
+                    });
+                    setUserAnswers(initialAnswers);
+
                 } else {
                     throw new Error("No questions generated.");
                 }
@@ -87,12 +95,21 @@ const ExamPage = () => {
 
 
     const handleSubmit = async () => {
+        const feedback = await evaluateAnswers({
+            questions: exam.questions,
+            user_answers: Object.entries(userAnswers).map(([id, answers]) => ({
+                id: Number(id),
+                answers: Array.isArray(answers) ? answers : [answers],
+            })),
+        });
+
         const examItem = {
             courseId: courseId,
             userId: null,
             topic: course.title,
             questions: exam.questions,
-            user_answers: userAnswers,
+            user_answers: feedback.user_answers,
+            final_score: feedback.final_score,
         }
 
         try {
@@ -102,7 +119,8 @@ const ExamPage = () => {
                 {
                     state: {
                         questions: exam.questions,
-                        user_answers: userAnswers
+                        user_answers: feedback.user_answers,
+                        final_score: feedback.final_score,
                     }
                 }
             );
@@ -127,25 +145,32 @@ const ExamPage = () => {
 
         );
     }
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-red-600 font-semibold">{error}</p>
+            </div>
+        );
+    }
 
     const selectedQuestion =
         exam.questions.find((q) => q.id === selectedId) ?? null;
 
     return (
-        <div className="flex flex-row-reverse h-screen bg-white font-sans">\
-            <div className="navbar bg-base-200 fixed h-18 top-0 z-70 px-4">
+        <div className="flex flex-row-reverse h-screen bg-white font-sans">
+            <div className="navbar bg-base-200 fixed shadow-md h-24 top-0 z-70 px-4 w-full">
                 <label className="text-gray-900 font-semibold text-xl">
                     {course?.title} Exam
                 </label>
             </div>
-                <ExamSidebar
-                    questions={exam.questions}
-                    userAnswers={userAnswers}
-                    selectedId={selectedId}
-                    onSelect={setSelectedId}
-                    onSubmit={handleSubmit}
-                />
-            <div className="flex-grow p-4 mx:auto pt-18">
+            <ExamSidebar
+                questions={exam.questions}
+                userAnswers={userAnswers}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                onSubmit={handleSubmit}
+            />
+            <div className="flex-grow p-4">
                 {selectedQuestion ? (
                     <QuestionContent
                         question={selectedQuestion}
