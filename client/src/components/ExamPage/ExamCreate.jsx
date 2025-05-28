@@ -20,6 +20,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { addExamSchema } from "../../api/exam/examAPI";
 import { getContentByCourseId } from "../../api/content/contentAPI";
+import { getExamByCourseId } from "../../api/exam/examAPI";
 import { getCourseById } from "../../api/course/courseAPI";
 
 const QUESTION_TYPES = ["true/false", "single select", "multiple select"];
@@ -41,22 +42,31 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
         (async () => {
             try {
                 const topics = await getContentByCourseId(courseId);
+                const examSchema = await getExamByCourseId(courseId);
                 setTopics(topics);
+                if (open) {
+                    if (examSchema && examSchema.questions_schema && examSchema.questions_schema.length > 0) {
+                        setFormData(examSchema.questions_schema.map(({ topic, score, type }) => ({
+                            topic,
+                            score,
+                            type,
+                        })));
+                    } else {
+                        // No existing schema, initialize with default topic if any
+                        setFormData([{
+                            topic: topics[0]?.topic || "",
+                            score: 1,
+                            type: QUESTION_TYPES[0],
+                        }]);
+                    }
+                    setError("");
+                    setSuccess("");
+                }
             } catch (err) {
                 setErrorMessage(err.message);
             }
         })();
-        if (open) {
-            setFormData([{
-                topic: topics[0]?.topic || "",
-                score: 1,
-                type: QUESTION_TYPES[0],
-            }]);
-
-            setError("");
-            setSuccess("");
-        }
-    }, [open]);
+    }, [open, courseId]);
 
     const handleChange = (index, e) => {
         const values = [...formData];
@@ -81,8 +91,8 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
                 examData: {
                     title,
                     courseId,
-                    questions_schema: questions_schema
-                }
+                    questions_schema,
+                },
             });
             setSuccess("Exam created successfully!");
             setLoading(false)
@@ -115,7 +125,7 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/50 transition-opacity">
                 <div className="w-full max-w-6xl bg-white rounded-lg shadow-xl overflow-hidden">
                     <div className="border-b px-6 py-4">
-                        <h2 className="text-lg font-semibold">Add Exam Schema</h2>
+                        <h2 className="text-lg font-semibold">Edit Exam Schema</h2>
                     </div>
 
                     <div className="p-6 max-h-[75vh] overflow-y-auto space-y-4">
@@ -133,7 +143,7 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
                         {formData.map((data, index) => (
                             <div
                                 key={index}
-                                className="flex flex-col md:flex-row gap-4 items-start"
+                                className="flex flex-col md:flex-row gap-4 items-center"
                             >
                                 <div className="flex-1">
                                     <label className="block text-sm font-medium mb-1">
@@ -158,8 +168,8 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
                                         Question type
                                     </label>
                                     <select
-                                        name="topic"
-                                        value={data.topic}
+                                        name="type"
+                                        value={data.type}
                                         onChange={(e) => handleChange(index, e)}
                                         disabled={loading}
                                         className="w-full border border-gray-300 rounded-lg px-3 py-2 hover:ring-2 hover:ring-gray-400 hover:outline-none"
@@ -177,47 +187,53 @@ const ExamCreateDialog = ({ open, onClose, onSave, courseId }) => {
                                     <input
                                         name="score"
                                         type="number"
+                                        min="1"
                                         value={data.score}
                                         onChange={(e) => handleChange(index, e)}
                                         disabled={loading}
-                                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-2 hover:ring-2 hover:ring-gray-400 hover:outline-none"
                                     />
                                 </div>
-                                <div className="flex items-center gap-2 mt-6 md:mt-5">
+                                <div className="flex items-center">
                                     <button
                                         type="button"
-                                        disabled={data.length <= 1}
+                                        disabled={formData.length <= 1}
                                         onClick={() => handleRemoveFields(index)}
-                                        className="p-2 text-gray-600 hover:text-red-600 disabled:opacity-50"
+                                        className={`btn btn-ghost p-2 mt-6 rounded-full hover:bg-white hover:border-white disabled:opacity-50       inline-flex items-center justify-center
+
+                                            ${formData.length <= 1
+                                                ? "disabled text-white"
+                                                : "text-gray-500 cursor-pointer hover:text-gray-900"
+                                            }`}
                                     >
                                         <RemoveIcon />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddFields}
-                                        className="p-2 text-gray-600 hover:text-teal-600"
-                                    >
-                                        <AddIcon />
                                     </button>
                                 </div>
                             </div>
                         ))}
+                        <button
+                            type="button"
+                            onClick={handleAddFields}
+                            className="btn btn-secondary p-4 mt-4"
+                        >
+                            + Add field
+                        </button>
                     </div>
                     <div className="flex justify-end gap-3 px-6 py-4 border-t">
                         <button
                             onClick={() => onClose(false)}
                             disabled={loading}
-                            className="px-4 py-2 border border-gray-400 rounded-md text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                            className="btn btn-ghost px-4 py-2 hover:bg-white hover:border-gray-100 disabled:opacity-50"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="px-4 py-2 bg-primary text-base rounded-md hover:bg-teal-400 disabled:opacity-50 flex items-center gap-2"
+                            className="btn btn-primary disabled:opacity-50 flex items-center gap-2"
                         >
                             {loading && <CircularProgress size={20} className="text-white" />}
-                            {loading ? "Saving..." : "Save Exam Schema"}
+                            {loading ? "Saving..." : "Save changes"}
                         </button>
                     </div>
                 </div>

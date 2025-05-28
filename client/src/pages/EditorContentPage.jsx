@@ -157,9 +157,7 @@ const EditorContentPage = () => {
         <button
             onClick={handleOpenExamCreateDialog}
             className="btn inline-flex items-center gap-2 px-4 py-2 bg-base-200 text-gray-800 shadow-sm text-sm font-medium rounded-md hover:bg-base-300 transition"
-        >
-            <AddIcon className="w-5 h-5" />
-            Add Exam Schema
+        > Exam Schema
         </button>
     </div>
 </div>
