@@ -16,20 +16,10 @@ import EditorContentPage from "./pages/EditorContentPage";
 import UserProfile from "./pages/UserProfile";
 
 function App() {
+
     return (
         <AuthProvider>
             <Router>
-                <Routes>
-                    <Route
-                        path="/courses/:courseId/exam"
-                        element={<ExamPage />}
-                    />
-                    <Route
-                        path="/courses/:courseId/examResults"
-                        element={<ExamFeedbackPage />}
-                    />
-                </Routes>
-
                 <Navbar />
                 <div className="h-24" />
                 <div className="content-container">
@@ -64,6 +54,14 @@ function App() {
                                 element={<EditorContentPage />}
                             />
                         </Route>
+                        <Route
+                            path="/courses/:courseId/exam"
+                            element={<ExamPage />}
+                        />
+                        <Route
+                            path="/courses/:courseId/examResults"
+                            element={<ExamFeedbackPage />}
+                        />
                     </Routes>
                 </div>
             </Router>

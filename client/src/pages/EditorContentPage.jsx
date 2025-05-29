@@ -146,7 +146,7 @@ const EditorContentPage = () => {
         )}
         <button
             onClick={handleOpenCreateDialog}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-base text-sm font-medium rounded-md hover:bg-teal-400 transition"
+            className="btn inline-flex items-center gap-2 px-4 py-2 bg-primary text-base text-sm font-medium rounded-md hover:bg-teal-400 transition"
         >
             <AddIcon className="w-5 h-5" />
             Add Topic
@@ -156,10 +156,8 @@ const EditorContentPage = () => {
     <div className="flex justify-end">
         <button
             onClick={handleOpenExamCreateDialog}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 transition"
-        >
-            <AddIcon className="w-5 h-5" />
-            Add Exam Schema
+            className="btn inline-flex items-center gap-2 px-4 py-2 bg-base-200 text-gray-800 shadow-sm text-sm font-medium rounded-md hover:bg-base-300 transition"
+        > Exam Schema
         </button>
     </div>
 </div>

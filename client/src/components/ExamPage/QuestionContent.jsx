@@ -6,17 +6,31 @@ const QuestionContent = ({
 }) => {
     const renderInput = () => {
         switch (question.question_type) {
-            case "open":
+            case "true/false":
                 return (
-                    <div className="pt-6">
-                        <input
-                            type="text"
-                            id="answer"
-                            value={answer}
-                            onChange={(e) => onChange(question.id, e.target.value)}
-                            className="h-20 border border-gray-300 text-teal-900 text-base rounded-lg w-full p-4 focus:outline-none focus:ring-2 focus:ring-teal-300"
-                            placeholder="Type your answer here..."
-                        />
+                    <div className="flex items-center me-4 gap-4 pt-4">
+                        {['True', 'False'].map((opt) => {
+                            const selected = answer === opt;
+                            return (
+                                <label
+                                    key={opt}
+                                    htmlFor={`option-${question.id}-${opt}`}
+                                    className={`block w-full p-4 border rounded-xl cursor-pointer text-base transition-all
+                                            ${selected ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-gray-300 hover:border-gray-400'}`}
+                                >
+                                    <input
+                                        type="radio"
+                                        id={`option-${question.id}-${opt}`}
+                                        name={`question-${question.id}`}
+                                        value={opt}
+                                        checked={selected}
+                                        onChange={(e) => onChange(question.id, e.target.value)}
+                                        className="hidden"
+                                    />
+                                    {opt}
+                                </label>
+                            );
+                        })}
                     </div>
                 );
             case "single select":
@@ -77,9 +91,7 @@ const QuestionContent = ({
                                         }}
                                         className="hidden"
                                     />
-                                    <span className="text-teal-800 text-base">
-                                        {opt}
-                                    </span>
+                                    {opt}
                                 </label>
                             );
                         })}
@@ -91,7 +103,7 @@ const QuestionContent = ({
     };
 
     return (
-        <div className="flex flex-col max-w-4xl mx-auto mt-6 bg-white rounded-xl p-6 shadow-lg">
+        <div className="flex flex-col max-w-4xl mx-auto bg-white rounded-xl p-6 shadow-lg">
             <div className="flex flex-row justify-between items-baseline border-b pb-4 mb-4">
                 <p className="text-lg text-xl font-semibold">
 
