@@ -6,7 +6,10 @@ import QuestionContent from "../components/ExamPage/QuestionContent";
 import { getContentByCourseId } from "../api/content/contentAPI";
 import { getCourseById } from "../api/course/courseAPI";
 import { getExamByCourseId } from "../api/exam/examAPI";
-import { generateExamQuestion, addExamWithAnswers } from "../api/exam/examContentAPI";
+import {
+    generateExamQuestion,
+    addExamWithAnswers,
+} from "../api/exam/examContentAPI";
 import { evaluateAnswers } from "../context/examContext";
 
 const ExamPage = () => {
@@ -22,7 +25,6 @@ const ExamPage = () => {
     const [error, setError] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
 
-
     useEffect(() => {
         const fetchExam = async () => {
             if (hasFetchedRef.current) return;
@@ -30,25 +32,29 @@ const ExamPage = () => {
 
             setLoading(true);
             try {
-                const { examSchema, courseData, topics } = await loadData(courseId);
+                const { examSchema, courseData, topics } = await loadData(
+                    courseId
+                );
                 setCourse(courseData);
 
-                const generated_questions = await generateExamQuestions(examSchema, courseData, topics);
+                const generated_questions = await generateExamQuestions(
+                    examSchema,
+                    courseData,
+                    topics
+                );
 
                 if (generated_questions?.questions?.length > 0) {
                     setExam(generated_questions);
                     setSelectedId(generated_questions.questions[0]?.id || null);
 
                     const initialAnswers = {};
-                    generated_questions.questions.forEach(q => {
+                    generated_questions.questions.forEach((q) => {
                         initialAnswers[q.id] = [];
                     });
                     setUserAnswers(initialAnswers);
-
                 } else {
                     throw new Error("No questions generated.");
                 }
-
             } catch (err) {
                 console.error(`Error loading exam ${courseId}:`, err);
                 setError("Failed to load exam.");
@@ -93,7 +99,6 @@ const ExamPage = () => {
         setUserAnswers((prev) => ({ ...prev, [id]: value }));
     };
 
-
     const handleSubmit = async () => {
         const feedback = await evaluateAnswers({
             questions: exam.questions,
@@ -110,20 +115,18 @@ const ExamPage = () => {
             questions: exam.questions,
             user_answers: feedback.user_answers,
             final_score: feedback.final_score,
-        }
+        };
 
         try {
             await addExamWithAnswers(examItem);
             console.log("Exam saved successfully");
-            navigate(`/courses/${courseId}/examResults`,
-                {
-                    state: {
-                        questions: exam.questions,
-                        user_answers: feedback.user_answers,
-                        final_score: feedback.final_score,
-                    }
-                }
-            );
+            navigate(`/courses/${courseId}/examResults`, {
+                state: {
+                    questions: exam.questions,
+                    user_answers: feedback.user_answers,
+                    final_score: feedback.final_score,
+                },
+            });
         } catch (err) {
             setError(err.message || "Failed to save exam");
             console.error("Exam saving error:", err);
@@ -134,15 +137,12 @@ const ExamPage = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-screen space-y-6 bg-white">
-
                 <div className="w-10 h-10 border-4 border-gray-500 border-t-transparent rounded-full animate-spin" />
 
                 <p className="text-lg font-semibold text-gray-700 text-center">
                     Preparing your exam... This won't take long!
                 </p>
             </div>
-
-
         );
     }
     if (error) {
@@ -178,9 +178,7 @@ const ExamPage = () => {
                         onChange={handleChange}
                     />
                 ) : (
-                    <div variant="body1">
-                        Please select a question.
-                    </div>
+                    <div variant="body1">Please select a question.</div>
                 )}
             </div>
         </div>

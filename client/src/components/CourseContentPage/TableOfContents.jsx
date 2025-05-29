@@ -5,11 +5,11 @@ const TableOfContents = ({ toc, onItemClick }) => {
 
     return (
         <nav className="p-4">
-            <ul className="space-y-1">
+            <ul className="space-y-2">
                 {toc.map((item) => (
                     <li key={item.id}>
                         <button
-                            className="btn btn-sm justify-start w-full text-left"
+                            className="btn btn-sm justify-start w-full text-left p-6"
                             style={{
                                 marginLeft: `${(item.level - 1) * 1.5}rem`,
                             }}
